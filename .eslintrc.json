@@ -20,6 +20,8 @@
     "no-new": "off",
     "consistent-return": "off",
     "max-len": "off",
-    "no-continue": "off"
+    "no-continue": "off",
+    "no-undef": "off",
+    "brace-style": ["off", "stroustrup"]
   }
 }
