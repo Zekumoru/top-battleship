@@ -11,6 +11,10 @@ export default class GameBoard {
     this.#initBoard(BOARD_SIZE, BOARD_SIZE);
   }
 
+  get board() {
+    return Object.freeze(this.#board);
+  }
+
   hasAllSunk() {
     if (!this.#ships.length) return false;
 
@@ -55,7 +59,14 @@ export default class GameBoard {
 
     const ship = this.#board[y]?.[x];
 
-    if (ship === null) return outcome;
+    if (ship === null) {
+      this.#board[y][x] = {
+        missed: true,
+      };
+
+      return outcome;
+    }
+
     if (ship === undefined) {
       return {
         error: 'invalid coordinates',

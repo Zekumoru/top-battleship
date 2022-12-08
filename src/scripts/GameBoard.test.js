@@ -28,6 +28,12 @@ test('Send missile to outside the board', () => {
   expect(gameBoard.receiveAttack(-1, -1).error).toMatch(/invalid coordinates/);
 });
 
+test('Send missile to empty coordinate', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.receiveAttack(0, 0);
+  expect(gameBoard.board[0][0]?.missed).toBe(true);
+});
+
 test('All ships have sunk', () => {
   const gameBoard = new GameBoard();
 
