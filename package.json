@@ -4,6 +4,8 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
+    "test": "jest",
+    "jest": "jest --watch",
     "build": "webpack",
     "serve": "webpack serve",
     "prepare": "husky install"
