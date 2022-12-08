@@ -4,19 +4,31 @@ export const BOARD_SIZE = 10;
 
 export default class GameBoard {
   #board;
+  #ships;
 
   constructor() {
+    this.#ships = [];
     this.#initBoard(BOARD_SIZE, BOARD_SIZE);
+  }
+
+  hasAllSunk() {
+    if (!this.#ships.length) return false;
+
+    return this.#ships.reduce((sunk, ship) => {
+      if (!ship.isSunk()) return false;
+      return sunk;
+    }, true);
   }
 
   placeShip(x, y, length = 1, direction = 'horizontal') {
     if (x < 0 || x >= BOARD_SIZE) return false;
     if (y < 0 || y >= BOARD_SIZE) return false;
 
+    let ship;
     if (direction === 'vertical') {
       if ((y + length - 1) >= BOARD_SIZE) return false;
 
-      const ship = new Ship(length);
+      ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y + i][x] = ship;
       }
@@ -24,11 +36,13 @@ export default class GameBoard {
     else {
       if ((x + length - 1) >= BOARD_SIZE) return false;
 
-      const ship = new Ship(length);
+      ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y][x + i] = ship;
       }
     }
+
+    this.#ships.push(ship);
 
     return true;
   }

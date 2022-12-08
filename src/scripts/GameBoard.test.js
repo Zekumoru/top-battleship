@@ -27,3 +27,15 @@ test('Send missile to outside the board', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.receiveAttack(-1, -1).error).toMatch(/invalid coordinates/);
 });
+
+test('All ships have sunk', () => {
+  const gameBoard = new GameBoard();
+
+  gameBoard.placeShip(0, 0);
+  gameBoard.placeShip(5, 5, 2);
+  gameBoard.receiveAttack(0, 0);
+  gameBoard.receiveAttack(5, 5);
+  gameBoard.receiveAttack(6, 5);
+
+  expect(gameBoard.hasAllSunk()).toBe(true);
+});
