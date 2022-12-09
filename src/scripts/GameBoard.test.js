@@ -1,6 +1,6 @@
 import GameBoard, { BOARD_SIZE } from './GameBoard';
 
-test('Placing a ship outside the board returns false', () => {
+it('should return false placing a ship outside the board', () => {
   const gameBoard = new GameBoard();
 
   expect(gameBoard.placeShip(-1, 0)).toBe(false);
@@ -9,50 +9,50 @@ test('Placing a ship outside the board returns false', () => {
   expect(gameBoard.placeShip(0, BOARD_SIZE)).toBe(false);
 });
 
-test('Placing a ship with length going outside the board returns false', () => {
+it('should return false placing a ship with length going outside the board', () => {
   const gameBoard = new GameBoard();
 
   expect(gameBoard.placeShip(BOARD_SIZE - 1, 0, 2, 'horizontal')).toBe(false);
   expect(gameBoard.placeShip(0, BOARD_SIZE - 1, 2, 'vertical')).toBe(false);
 });
 
-test('Placing a ship adjacent to another ship returns false', () => {
+it('should return false placing a ship adjacent to another ship', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0);
   expect(gameBoard.placeShip(0, 1)).toBe(false);
 });
 
-test('Placing a ship overlapping another ship returns false', () => {
+it('should return false placing a ship overlapping another ship', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0, 3, 'horizontal');
   expect(gameBoard.placeShip(2, 0)).toBe(false);
 });
 
-test('Placing a ship two blocks away from another ship returns true', () => {
+it('should return true placing a ship two blocks away from another ship', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0, 3, 'horizontal');
   expect(gameBoard.placeShip(0, 2)).toBe(true);
 });
 
-test('Ship has been hit', () => {
+test('that a ship has been hit', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0, 3, 'horizontal');
 
   expect(gameBoard.receiveAttack(0, 0).hit).toBe(true);
 });
 
-test('Send missile to outside the board', () => {
+it('should contain an error property sending a missile outside the board', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.receiveAttack(-1, -1).error).toMatch(/invalid coordinates/);
 });
 
-test('Send missile to empty coordinate', () => {
+test('that it returns missed if the coordinate has already been sent a missile to', () => {
   const gameBoard = new GameBoard();
   gameBoard.receiveAttack(0, 0);
   expect(gameBoard.board[0][0]?.missed).toBe(true);
 });
 
-test('All ships have sunk', () => {
+it('should return true if all ships have sunk', () => {
   const gameBoard = new GameBoard();
 
   gameBoard.placeShip(0, 0);

@@ -1,6 +1,6 @@
 import Ship from './Ship';
 
-test('A length of 3 ship with 3 hits is sunk', () => {
+test('that a ship with length 3 and 3 hits is sunk', () => {
   const ship = new Ship(3);
 
   ship.hit();
@@ -10,13 +10,13 @@ test('A length of 3 ship with 3 hits is sunk', () => {
   expect(ship.isSunk()).toBe(true);
 });
 
-test('A ship not hit is floating', () => {
+test('that a ship with no hits is still floating', () => {
   const ship = new Ship(1);
 
   expect(ship.isSunk()).toBe(false);
 });
 
-test('A ship with length zero throws RangeError', () => {
+test('that creating a ship with length 0 throws a RangeError', () => {
   expect(() => {
     new Ship(0);
   }).toThrow(RangeError);

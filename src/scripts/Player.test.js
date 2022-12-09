@@ -1,12 +1,12 @@
 import ComputerPlayer from './ComputerPlayer';
 import Player from './Player';
 
-test('Player name is correct', () => {
+test('that the player name is correct', () => {
   const player = new Player('Zekumoru');
   expect(player.name).toMatch('Zekumoru');
 });
 
-test('Computer makes a move at some random location', () => {
+test('that the computer makes a move at some random location', () => {
   const computer = new ComputerPlayer();
   const coords = computer.attack();
 
@@ -14,7 +14,7 @@ test('Computer makes a move at some random location', () => {
   expect(coords.y).toBeDefined();
 });
 
-test('Computer does not make the same move', () => {
+test('that the computer does not make the same move', () => {
   jest.spyOn(global.Math, 'random').mockReturnValueOnce(0.12345).mockReturnValueOnce(0.12345);
 
   const computer = new ComputerPlayer();
