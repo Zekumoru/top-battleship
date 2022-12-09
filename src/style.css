@@ -1,0 +1,33 @@
+:root {
+  --bg-color: hsl(252, 3%, 10%);
+  --fg-color: #938e94;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--bg-color);
+}
+
+.game-board {
+  --border-size: 1px;
+  border: calc(var(--border-size) / 2) solid var(--fg-color);
+  max-width: 720px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.cell {
+  border: var(--border-size) solid var(--fg-color);
+}
+
+.cell::before {
+  content: "";
+  height: 0;
+  display: block;
+  padding-top: 100%;
+}
