@@ -11,18 +11,18 @@
 
 html {
   background-color: var(--bg-color);
+  color: var(--fg-color);
 }
 
 .game-board {
-  --border-size: 1px;
-  border: calc(var(--border-size) / 2) solid var(--fg-color);
+  --border-game-cell: 2px solid var(--fg-color);
   max-width: 720px;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(11, 1fr);
 }
 
 .cell {
-  border: var(--border-size) solid var(--fg-color);
+  position: relative;
 }
 
 .cell::before {
@@ -30,4 +30,27 @@ html {
   height: 0;
   display: block;
   padding-top: 100%;
+}
+
+.cell .content {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.game-cell {
+  border-top: var(--border-game-cell);
+  border-left: var(--border-game-cell);
+}
+
+.game-cell:nth-child(11n) {
+  border-right: var(--border-game-cell);
+}
+
+.game-cell:nth-child(n + 111) {
+  border-bottom: var(--border-game-cell);
 }
