@@ -1,6 +1,10 @@
 import ComputerPlayer from './ComputerPlayer';
 import Player from './Player';
 
+afterEach(() => {
+  jest.spyOn(global.Math, 'random').mockRestore();
+});
+
 test('that the player name is correct', () => {
   const player = new Player('Zekumoru');
   expect(player.name).toMatch('Zekumoru');
@@ -15,7 +19,7 @@ test('that the computer makes a move at some random location', () => {
 });
 
 test('that the computer does not make the same move', () => {
-  jest.spyOn(global.Math, 'random').mockReturnValueOnce(0.12345).mockReturnValueOnce(0.12345);
+  jest.spyOn(global.Math, 'random').mockReturnValue(0.12345);
 
   const computer = new ComputerPlayer();
 
