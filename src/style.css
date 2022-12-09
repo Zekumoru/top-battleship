@@ -1,6 +1,9 @@
 :root {
   --bg-color: hsl(252, 3%, 10%);
   --fg-color: #938e94;
+  --primary-color: #557a95;
+  --secondary-color: #7395ae;
+  --accent-color: #b1a296;
 }
 
 * {
@@ -53,4 +56,21 @@ html {
 
 .game-cell:nth-child(n + 111) {
   border-bottom: var(--border-game-cell);
+}
+
+.ships {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ship {
+  display: flex;
+  gap: 4px;
+}
+
+.ship-block {
+  width: 20px;
+  height: 20px;
+  background-color: var(--primary-color);
 }
