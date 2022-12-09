@@ -16,6 +16,24 @@ test('Placing a ship with length going outside the board returns false', () => {
   expect(gameBoard.placeShip(0, BOARD_SIZE - 1, 2, 'vertical')).toBe(false);
 });
 
+test('Placing a ship adjacent to another ship returns false', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.placeShip(0, 0);
+  expect(gameBoard.placeShip(0, 1)).toBe(false);
+});
+
+test('Placing a ship overlapping another ship returns false', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.placeShip(0, 0, 3, 'horizontal');
+  expect(gameBoard.placeShip(2, 0)).toBe(false);
+});
+
+test('Placing a ship two blocks away from another ship returns true', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.placeShip(0, 0, 3, 'horizontal');
+  expect(gameBoard.placeShip(0, 2)).toBe(true);
+});
+
 test('Ship has been hit', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0, 3, 'horizontal');

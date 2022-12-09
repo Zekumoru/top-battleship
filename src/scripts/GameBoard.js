@@ -32,6 +32,10 @@ export default class GameBoard {
     if (direction === 'vertical') {
       if ((y + length - 1) >= BOARD_SIZE) return false;
 
+      for (let i = length - 1; i >= 0; i--) {
+        if (this.#isCoordNearShips(x, y + i)) return false;
+      }
+
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y + i][x] = ship;
@@ -39,6 +43,10 @@ export default class GameBoard {
     }
     else {
       if ((x + length - 1) >= BOARD_SIZE) return false;
+
+      for (let i = length - 1; i >= 0; i--) {
+        if (this.#isCoordNearShips(x + i, y)) return false;
+      }
 
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
@@ -91,5 +99,21 @@ export default class GameBoard {
 
       this.#board.push(row);
     }
+  }
+
+  #isCoordNearShips(x, y) {
+    for (let i = -1; i < 2; i++) {
+      const aY = y + i;
+      if (aY < 0 || aY >= BOARD_SIZE) continue;
+
+      for (let j = -1; j < 2; j++) {
+        const aX = x + j;
+        if (aX < 0 || aX >= BOARD_SIZE) continue;
+
+        if (this.#board[aY][aX] !== null) return true;
+      }
+    }
+
+    return false;
   }
 }
