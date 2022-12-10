@@ -82,8 +82,19 @@ export default class GameBoard {
       };
     }
 
+    if (ship.hit === true || ship.missed === true) {
+      return {
+        alreadyHit: true,
+        ...outcome,
+      };
+    }
+
     ship.hit();
     outcome.hit = true;
+    this.#board[y][x] = {
+      hit: true,
+    };
+
     return outcome;
   }
 

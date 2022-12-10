@@ -63,3 +63,14 @@ it('should return true if all ships have sunk', () => {
 
   expect(gameBoard.hasAllSunk()).toBe(true);
 });
+
+it('should return hit property with false if attacked the same spot', () => {
+  const gameBoard = new GameBoard();
+
+  gameBoard.placeShip(1, 1);
+  gameBoard.receiveAttack(0, 0);
+  gameBoard.receiveAttack(1, 1);
+
+  expect(gameBoard.receiveAttack(0, 0).alreadyHit).toBe(true);
+  expect(gameBoard.receiveAttack(1, 1).alreadyHit).toBe(true);
+});
