@@ -11,6 +11,8 @@ export function renderBoard(gameBoard) {
       gameBoard.appendChild(cell);
     }
   }
+
+  return gameBoard;
 }
 
 function createCell(x, y) {
@@ -28,4 +30,17 @@ function createCell(x, y) {
   }
 
   return cell;
+}
+
+export function renderShips(playerBoard, boardDOM) {
+  const start = 12;
+  playerBoard.board.forEach((row, y) => {
+    row.forEach((col, x) => {
+      const index = start + y * 11 + x;
+      const cell = boardDOM.children[index];
+
+      if (col === null) return;
+      cell.style = 'background-color: lime;';
+    });
+  });
 }

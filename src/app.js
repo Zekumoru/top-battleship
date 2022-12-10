@@ -2,12 +2,12 @@ import '@mdi/font/css/materialdesignicons.css';
 import 'normalize.css';
 import './style.css';
 import { BOARD_SIZE } from './scripts/GameBoard';
-import { renderBoard } from './scripts/DOMUtils';
+import { renderBoard, renderShips } from './scripts/DOMUtils';
 import Player from './scripts/Player';
 import ComputerPlayer from './scripts/ComputerPlayer';
 
-renderBoard(document.querySelector('#user-game-board'));
-renderBoard(document.querySelector('#enemy-game-board'));
+const userBoardDOM = renderBoard(document.querySelector('#user-game-board'));
+const enemyBoardDOM = renderBoard(document.querySelector('#enemy-game-board'));
 
 function gameLoop() {
   const player = new Player();
@@ -15,6 +15,9 @@ function gameLoop() {
 
   populateBoard(player.board);
   populateBoard(computer.board);
+
+  renderShips(player.board, userBoardDOM);
+  renderShips(computer.board, enemyBoardDOM);
 }
 
 function populateBoard(board) {
