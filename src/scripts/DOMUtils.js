@@ -36,7 +36,7 @@ function createCell(x, y) {
   return cell;
 }
 
-export function renderShips(playerBoard, boardDOM) {
+export function renderShips(playerBoard, boardDOM, hideShips = false) {
   const start = 12;
   playerBoard.board.forEach((row, y) => {
     row.forEach((col, x) => {
@@ -44,6 +44,18 @@ export function renderShips(playerBoard, boardDOM) {
       const cell = boardDOM.children[index];
 
       if (col === null) return;
+
+      if (col?.missed === true) {
+        cell.style = 'background-color: grey;';
+        return;
+      }
+
+      if (col?.hit === true) {
+        cell.style = 'background-color: red;';
+        return;
+      }
+
+      if (hideShips) return;
       cell.style = 'background-color: lime;';
     });
   });
