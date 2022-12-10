@@ -1,5 +1,4 @@
 module.exports = {
-  presets: [['@babel/preset-env', { targets: { node: 'current' } }]],
   moduleFileExtensions: ['js', 'jsx'],
   moduleDirectories: ['node_modules', 'bower_components', 'shared'],
   moduleNameMapper: {
