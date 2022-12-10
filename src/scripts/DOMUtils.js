@@ -19,7 +19,11 @@ function createCell(x, y) {
   const cell = document.createElement('div');
   cell.classList.add('cell');
 
-  if (!(x === 0 || y === 0)) cell.classList.add('game-cell');
+  if (!(x === 0 || y === 0)) {
+    cell.classList.add('game-cell');
+    cell.dataset.x = x - 1;
+    cell.dataset.y = y - 1;
+  }
   else if (x !== 0 && y === 0) {
     cell.innerHTML = `<div class="content">${String.fromCharCode(x + 64)}</div>`;
     cell.classList.add('alpha-label');
