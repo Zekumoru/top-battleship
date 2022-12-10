@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition, no-loop-func, no-await-in-loop, no-console */
 import '@mdi/font/css/materialdesignicons.css';
 import 'normalize.css';
 import './style.css';
@@ -20,24 +21,39 @@ async function gameLoop() {
   renderShips(player.board, userBoardDOM);
   renderShips(computer.board, enemyBoardDOM, true);
 
+  while (true) {
+    await handlePlayerTurn(computer, enemyBoardDOM);
+    if (computer.board.hasAllSunk()) break;
+
+    await handleComputerTurn(computer, player, userBoardDOM);
+    if (player.board.hasAllSunk()) break;
+  }
+
+  console.log(`Game has finished! ${player.board.hasAllSunk() ? computer.name : 'Player'} wins!`);
+}
+
+async function handlePlayerTurn(opponent, opponentBoardDOM) {
+  let hit;
+  let alreadyHit;
+
   do {
-    let alreadyHit;
-    do {
-      // eslint-disable-next-line no-await-in-loop, no-loop-func
-      const attackedTile = await new Promise((resolve) => { userClick = resolve; });
-      const { x, y } = attackedTile.dataset;
+    const attackedTile = await new Promise((resolve) => { userClick = resolve; });
+    const { x, y } = attackedTile.dataset;
 
-      ({ alreadyHit } = computer.board.receiveAttack(x, y));
-    } while (alreadyHit);
+    ({ hit, alreadyHit } = opponent.board.receiveAttack(x, y));
+    renderShips(opponent.board, opponentBoardDOM, true);
+  } while (hit || alreadyHit);
+}
 
+async function handleComputerTurn(computer, opponent, opponentBoardDOM) {
+  let hit;
+
+  do {
     const { x, y } = computer.attack();
-    player.board.receiveAttack(x, y);
 
-    renderShips(player.board, userBoardDOM);
-    renderShips(computer.board, enemyBoardDOM, true);
-  } while (!player.board.hasAllSunk() && !computer.board.hasAllSunk());
-
-  console.log('Game has finished!');
+    ({ hit } = opponent.board.receiveAttack(x, y));
+    renderShips(opponent.board, opponentBoardDOM);
+  } while (hit && !opponent.board.hasAllSunk());
 }
 
 enemyBoardDOM.addEventListener('click', (e) => {
