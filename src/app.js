@@ -25,11 +25,13 @@ function populateBoard(board) {
   shipsLengths.forEach((shipLength) => {
     let x;
     let y;
+    let direction;
 
     do {
       x = generateRandomInt(BOARD_SIZE);
       y = generateRandomInt(BOARD_SIZE);
-    } while (!board.placeShip(x, y, shipLength));
+      direction = (Math.random() > 0.5) ? 'horizontal' : 'vertical';
+    } while (!board.placeShip(x, y, shipLength, direction));
   });
 }
 
