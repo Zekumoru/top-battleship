@@ -31,23 +31,25 @@ async function start({
     if (playerOne.board.hasAllSunk()) break;
   }
 
-  console.log(`Game has finished! ${player.board.hasAllSunk() ? computer.name : 'Player'} wins!`);
+  return playerTwo.board.hasAllSunk() ? playerOne : playerTwo;
 }
 
 async function handleTurn(player, opponent, opponentBoardDOM) {
   const isComputer = (player instanceof ComputerPlayer);
-  let hit;
+  let hit = true;
   let alreadyHit;
 
   do {
     const coords = (isComputer)
       ? player.attack()
       : (await new Promise((resolve) => { getUserInput = resolve; }));
+
+    if (!isComputer && coords.board !== opponentBoardDOM) continue;
     const { x, y } = coords;
 
     ({ hit, alreadyHit } = opponent.board.receiveAttack(x, y));
     renderShips(opponent.board, opponentBoardDOM, !isComputer);
-  } while (hit || alreadyHit);
+  } while (!opponent.board.hasAllSunk() && (hit || alreadyHit));
 }
 
 function populateBoard(board) {

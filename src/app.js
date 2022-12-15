@@ -12,7 +12,10 @@ const enemyBoardDOM = renderBoard(document.querySelector('#enemy-game-board'));
 
 enemyBoardDOM.addEventListener('click', (e) => {
   if (!e.target.classList.contains('game-cell')) return;
-  Game.getUserInput(e.target.dataset);
+  Game.getUserInput({
+    board: e.target.parentNode,
+    ...e.target.dataset,
+  });
 });
 
 Game.start({
@@ -20,4 +23,6 @@ Game.start({
   playerTwo: new ComputerPlayer(),
   playerOneDOM: userBoardDOM,
   playerTwoDOM: enemyBoardDOM,
+}).then((winner) => {
+  console.log(`${winner.name} wins!`);
 });
