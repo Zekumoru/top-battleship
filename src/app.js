@@ -2,7 +2,7 @@
 import '@mdi/font/css/materialdesignicons.css';
 import 'normalize.css';
 import './style.css';
-import { renderBoard } from './scripts/DOMUtils';
+import { renderBoard, renderShips } from './scripts/DOMUtils';
 import Game from './scripts/Game';
 import Player from './scripts/Player';
 import ComputerPlayer from './scripts/ComputerPlayer';
@@ -11,16 +11,25 @@ const userBoardDOM = renderBoard(document.querySelector('#user-game-board'));
 const enemyBoardDOM = renderBoard(document.querySelector('#enemy-game-board'));
 
 enemyBoardDOM.addEventListener('click', (e) => {
-  if (!e.target.classList.contains('game-cell')) return;
+  if (!(e.target.classList.contains('game-cell') || e.target.classList.contains('ship-block'))) return;
+
   Game.getUserInput({
-    board: e.target.parentNode,
+    board: enemyBoardDOM,
     ...e.target.dataset,
   });
 });
 
+const player = new Player('Player');
+const computer = new ComputerPlayer();
+
+window.addEventListener('resize', () => {
+  renderShips(player.board, userBoardDOM);
+  renderShips(computer.board, enemyBoardDOM);
+});
+
 Game.start({
-  playerOne: new Player(),
-  playerTwo: new ComputerPlayer(),
+  playerOne: player,
+  playerTwo: computer,
   playerOneDOM: userBoardDOM,
   playerTwoDOM: enemyBoardDOM,
 }).then((winner) => {
