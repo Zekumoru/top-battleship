@@ -22,6 +22,7 @@ html {
   max-width: 720px;
   display: grid;
   grid-template-columns: repeat(11, 1fr);
+  position: relative;
 }
 
 .cell {
@@ -58,19 +59,12 @@ html {
   border-bottom: var(--border-game-cell);
 }
 
-.ships {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .ship {
-  display: flex;
-  gap: 4px;
+  position: absolute;
+  border: 4px solid lightblue;
 }
 
 .ship-block {
-  width: 20px;
-  height: 20px;
-  background-color: var(--primary-color);
+  flex: 1;
+  background-color: rgba(78, 189, 199, 0.2);
 }

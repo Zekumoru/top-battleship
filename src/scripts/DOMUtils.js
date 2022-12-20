@@ -38,25 +38,67 @@ function createCell(x, y) {
 
 export function renderShips(playerBoard, boardDOM, hideShips = false) {
   const start = 12;
+  const gameCellSize = boardDOM.children[start].getBoundingClientRect().width;
+  const borderSize = gameCellSize - Number(window.getComputedStyle(boardDOM.children[start], '::before').width.slice(0, -2));
+
+  boardDOM.querySelectorAll('.ship').forEach((ship) => ship.remove());
+
   playerBoard.board.forEach((row, y) => {
     row.forEach((col, x) => {
       const index = start + y * 11 + x;
       const cell = boardDOM.children[index];
+      const { ship, status, direction } = col;
 
-      if (col === null) return;
-
-      if (col?.missed === true) {
+      if (status === 'miss') {
         cell.style = 'background-color: grey;';
-        return;
       }
 
-      if (col?.hit === true) {
+      if (status === 'hit') {
         cell.style = 'background-color: red;';
-        return;
       }
 
-      if (hideShips) return;
-      cell.style = 'background-color: lime;';
+      if (ship === null) return;
+      if (hideShips) return; // for computer's board so it's hidden for the player
+
+      if (x > 0 && playerBoard.board[y][x - 1].ship === ship) return;
+      if (y > 0 && playerBoard.board[y - 1][x].ship === ship) return;
+
+      const top = gameCellSize * (1 + y);
+      const left = gameCellSize * (1 + x);
+
+      let width = gameCellSize;
+      let height = gameCellSize;
+
+      if (direction === 'horizontal') width *= ship.length;
+      else height *= ship.length;
+
+      width += borderSize;
+      height += borderSize;
+
+      if ((direction === 'vertical' && (x + 1) === BOARD_SIZE)
+        || (direction === 'horizontal' && (x + ship.length) === BOARD_SIZE)) {
+        width -= borderSize;
+      }
+
+      const shipElement = document.createElement('div');
+      shipElement.className = 'ship';
+      shipElement.style.width = `${width}px`;
+      shipElement.style.height = `${height}px`;
+      shipElement.style.top = `${top}px`;
+      shipElement.style.left = `${left}px`;
+      shipElement.addEventListener('click', null, true);
+
+      shipElement.style.display = 'flex';
+      if (direction === 'vertical') shipElement.style.flexDirection = 'column';
+      for (let i = 0; i < ship.length; i++) {
+        const shipBlock = document.createElement('div');
+        shipBlock.className = 'ship-block';
+        shipBlock.dataset.x = (direction === 'horizontal') ? x + i : x;
+        shipBlock.dataset.y = (direction === 'vertical') ? y + i : y;
+        shipElement.appendChild(shipBlock);
+      }
+
+      boardDOM.appendChild(shipElement);
     });
   });
 }
