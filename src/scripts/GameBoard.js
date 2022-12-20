@@ -52,7 +52,7 @@ export default class GameBoard {
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y][x + i].ship = ship;
-        this.#board[y + i][x].direction = direction;
+        this.#board[y][x + i].direction = direction;
       }
     }
 
