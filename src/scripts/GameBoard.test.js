@@ -16,12 +16,26 @@ it('should return false placing a ship with length going outside the board', () 
   expect(gameBoard.placeShip(0, BOARD_SIZE - 1, 2, 'vertical')).toBe(false);
 });
 
+test('that a cell contains status and direction', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.board[0][0].status).toMatch('none');
+  expect(gameBoard.board[0][0].direction).toMatch('none');
+});
+
 it('it should properly set the board\'s cell info when placing a ship', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0, 2, 'horizontal');
   gameBoard.placeShip(0, 2, 2, 'vertical');
   expect(gameBoard.board[0][0].ship).not.toBeUndefined();
   expect(gameBoard.board[2][0].ship).not.toBeUndefined();
+});
+
+test('that a cell contains a ship\'s direction when placed', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.placeShip(0, 0, 2, 'horizontal');
+  gameBoard.placeShip(0, 2, 2, 'vertical');
+  expect(gameBoard.board[0][0].direction).toMatch('horizontal');
+  expect(gameBoard.board[2][0].direction).toMatch('vertical');
 });
 
 it('should return false placing a ship adjacent to another ship', () => {

@@ -39,6 +39,7 @@ export default class GameBoard {
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y + i][x].ship = ship;
+        this.#board[y + i][x].direction = direction;
       }
     }
     else {
@@ -51,6 +52,7 @@ export default class GameBoard {
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y][x + i].ship = ship;
+        this.#board[y + i][x].direction = direction;
       }
     }
 
@@ -103,6 +105,7 @@ export default class GameBoard {
         row.push({
           ship: null,
           status: 'none',
+          direction: 'none',
         });
       }
 
