@@ -49,7 +49,7 @@ it('should contain an error property sending a missile outside the board', () =>
 test('that it returns missed if the coordinate has already been sent a missile to', () => {
   const gameBoard = new GameBoard();
   gameBoard.receiveAttack(0, 0);
-  expect(gameBoard.board[0][0]?.missed).toBe(true);
+  expect(gameBoard.board[0][0].status).toMatch('miss');
 });
 
 it('should return true if all ships have sunk', () => {

@@ -50,7 +50,7 @@ export default class GameBoard {
 
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
-        this.#board[y][x + i] = ship;
+        this.#board[y][x + i].ship = ship;
       }
     }
 
@@ -65,35 +65,30 @@ export default class GameBoard {
       hit: false,
     };
 
-    const ship = this.#board[y]?.[x];
+    const block = this.#board[y]?.[x];
 
-    if (ship === null) {
-      this.#board[y][x] = {
-        missed: true,
-      };
-
-      return outcome;
-    }
-
-    if (ship === undefined) {
+    if (block === undefined) {
       return {
         error: 'invalid coordinates',
         ...outcome,
       };
     }
 
-    if (ship.hit === true || ship.missed === true) {
+    if (block.ship === null && block.status === 'none') {
+      this.#board[y][x].status = 'miss';
+      return outcome;
+    }
+
+    if (block.status === 'hit' || block.status === 'miss') {
       return {
         alreadyHit: true,
         ...outcome,
       };
     }
 
-    ship.hit();
+    block.ship.hit();
     outcome.hit = true;
-    this.#board[y][x] = {
-      hit: true,
-    };
+    this.#board[y][x].status = 'hit';
 
     return outcome;
   }
@@ -105,7 +100,10 @@ export default class GameBoard {
       const row = [];
 
       for (let j = 0; j < cols; j++) {
-        row.push(null);
+        row.push({
+          ship: null,
+          status: 'none',
+        });
       }
 
       this.#board.push(row);
@@ -121,7 +119,7 @@ export default class GameBoard {
         const aX = x + j;
         if (aX < 0 || aX >= BOARD_SIZE) continue;
 
-        if (this.#board[aY][aX] !== null) return true;
+        if (this.#board[aY][aX].ship !== null) return true;
       }
     }
 
