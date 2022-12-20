@@ -16,6 +16,14 @@ it('should return false placing a ship with length going outside the board', () 
   expect(gameBoard.placeShip(0, BOARD_SIZE - 1, 2, 'vertical')).toBe(false);
 });
 
+it('it should properly set the board\'s cell info when placing a ship', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.placeShip(0, 0, 2, 'horizontal');
+  gameBoard.placeShip(0, 2, 2, 'vertical');
+  expect(gameBoard.board[0][0].ship).not.toBeUndefined();
+  expect(gameBoard.board[2][0].ship).not.toBeUndefined();
+});
+
 it('should return false placing a ship adjacent to another ship', () => {
   const gameBoard = new GameBoard();
   gameBoard.placeShip(0, 0);

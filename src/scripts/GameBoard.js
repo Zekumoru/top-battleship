@@ -38,7 +38,7 @@ export default class GameBoard {
 
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
-        this.#board[y + i][x] = ship;
+        this.#board[y + i][x].ship = ship;
       }
     }
     else {
