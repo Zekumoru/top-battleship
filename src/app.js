@@ -34,7 +34,7 @@ renderShips(player.board, userBoardDOM);
 renderShips(computer.board, enemyBoardDOM, true);
 
 makeShipsDraggable(userBoardDOM);
-makeCellsDroppable(userBoardDOM);
+makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
 
 // Game.start({
 //   playerOne: player,
@@ -64,26 +64,37 @@ function makeShipsDraggable(boardDOM) {
 
     ship.addEventListener('dragstart', () => {
       dragInfo.ship = ship;
-      console.log(dragInfo);
+      makeDroppable([...ship.children].filter((shipBlock) => (shipBlock !== dragInfo.shipBlock)));
     });
 
     ship.addEventListener('dragend', () => {
       dragInfo.ship = null;
       dragInfo.shipBlock = null;
       dragInfo.shipBlockIndex = -1;
+      removeDroppable([...ship.children]);
     });
   });
 }
 
-function makeCellsDroppable(boardDOM) {
-  boardDOM.querySelectorAll('.game-cell').forEach((cell) => {
-    cell.addEventListener('dragover', (e) => {
-      e.preventDefault();
-    });
-
-    cell.addEventListener('drop', (e) => {
-      e.preventDefault();
-      console.log(e.target);
-    });
+function makeDroppable(array) {
+  array.forEach((item) => {
+    item.addEventListener('dragover', dragOver);
+    item.addEventListener('drop', drop);
   });
+}
+
+function removeDroppable(array) {
+  array.forEach((item) => {
+    item.removeEventListener('dragover', dragOver);
+    item.removeEventListener('drop', drop);
+  });
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  e.preventDefault();
+  console.log(e.target);
 }
