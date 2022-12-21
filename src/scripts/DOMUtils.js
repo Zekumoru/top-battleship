@@ -82,6 +82,8 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
 
       const shipElement = document.createElement('div');
       shipElement.className = 'ship';
+      shipElement.dataset.x = x;
+      shipElement.dataset.y = y;
       shipElement.style.width = `${width}px`;
       shipElement.style.height = `${height}px`;
       shipElement.style.top = `${top}px`;
