@@ -96,3 +96,12 @@ it('should return hit property with false if attacked the same spot', () => {
   expect(gameBoard.receiveAttack(0, 0).alreadyHit).toBe(true);
   expect(gameBoard.receiveAttack(1, 1).alreadyHit).toBe(true);
 });
+
+it('should return true removing a ship from the board', () => {
+  const gameBoard = new GameBoard();
+  gameBoard.placeShip(2, 2, 5);
+
+  expect(gameBoard.board[2][5].ship).not.toBeNull();
+  expect(gameBoard.removeShip(gameBoard.board[2][2].ship)).toBe(true);
+  expect(gameBoard.board[2][5].ship).toBeNull();
+});

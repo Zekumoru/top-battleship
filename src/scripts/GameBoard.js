@@ -61,6 +61,23 @@ export default class GameBoard {
     return true;
   }
 
+  removeShip(ship) {
+    const index = this.#ships.indexOf(ship);
+    if (index < 0) return false;
+
+    this.#ships.splice(index, 1);
+    this.#board.forEach((row) => {
+      row.forEach((col) => {
+        if (ship === col.ship) {
+          col.ship = null;
+          col.direction = 'none';
+        }
+      });
+    });
+
+    return true;
+  }
+
   receiveAttack(x, y) {
     const outcome = {
       coords: { x, y },
