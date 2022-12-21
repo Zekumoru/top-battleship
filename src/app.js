@@ -45,31 +45,32 @@ makeCellsDroppable(userBoardDOM);
 //   console.log(`${winner.name} wins!`);
 // });
 
+const dragInfo = {
+  ship: null,
+  shipBlock: null,
+  shipBlockIndex: -1,
+};
+
 function makeShipsDraggable(boardDOM) {
   boardDOM.querySelectorAll('.ship').forEach((ship) => {
     ship.draggable = true;
-    const shipBlockDragged = {
-      index: -1,
-      element: null,
-      reset() {
-        this.index = -1;
-        this.element = null;
-      },
-    };
 
     [...ship.children].forEach((shipBlock, index) => {
       shipBlock.addEventListener('mousedown', () => {
-        shipBlockDragged.element = shipBlock;
-        shipBlockDragged.index = index;
-      });
-
-      shipBlock.addEventListener('mouseup', () => {
-        shipBlockDragged.reset();
+        dragInfo.shipBlock = shipBlock;
+        dragInfo.shipBlockIndex = index;
       });
     });
 
     ship.addEventListener('dragstart', () => {
-      console.log(shipBlockDragged);
+      dragInfo.ship = ship;
+      console.log(dragInfo);
+    });
+
+    ship.addEventListener('dragend', () => {
+      dragInfo.ship = null;
+      dragInfo.shipBlock = null;
+      dragInfo.shipBlockIndex = -1;
     });
   });
 }
