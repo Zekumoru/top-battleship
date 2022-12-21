@@ -27,11 +27,62 @@ window.addEventListener('resize', () => {
   renderShips(computer.board, enemyBoardDOM);
 });
 
-Game.start({
-  playerOne: player,
-  playerTwo: computer,
-  playerOneDOM: userBoardDOM,
-  playerTwoDOM: enemyBoardDOM,
-}).then((winner) => {
-  console.log(`${winner.name} wins!`);
-});
+Game.populateBoard(player.board);
+Game.populateBoard(computer.board);
+
+renderShips(player.board, userBoardDOM);
+renderShips(computer.board, enemyBoardDOM, true);
+
+makeShipsDraggable(userBoardDOM);
+makeCellsDroppable(userBoardDOM);
+
+// Game.start({
+//   playerOne: player,
+//   playerTwo: computer,
+//   playerOneDOM: userBoardDOM,
+//   playerTwoDOM: enemyBoardDOM,
+// }).then((winner) => {
+//   console.log(`${winner.name} wins!`);
+// });
+
+function makeShipsDraggable(boardDOM) {
+  boardDOM.querySelectorAll('.ship').forEach((ship) => {
+    ship.draggable = true;
+    const shipBlockDragged = {
+      index: -1,
+      element: null,
+      reset() {
+        this.index = -1;
+        this.element = null;
+      },
+    };
+
+    [...ship.children].forEach((shipBlock, index) => {
+      shipBlock.addEventListener('mousedown', () => {
+        shipBlockDragged.element = shipBlock;
+        shipBlockDragged.index = index;
+      });
+
+      shipBlock.addEventListener('mouseup', () => {
+        shipBlockDragged.reset();
+      });
+    });
+
+    ship.addEventListener('dragstart', () => {
+      console.log(shipBlockDragged);
+    });
+  });
+}
+
+function makeCellsDroppable(boardDOM) {
+  boardDOM.querySelectorAll('.game-cell').forEach((cell) => {
+    cell.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    cell.addEventListener('drop', (e) => {
+      e.preventDefault();
+      console.log(e.target);
+    });
+  });
+}

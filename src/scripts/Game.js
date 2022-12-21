@@ -6,6 +6,7 @@ import ComputerPlayer from './ComputerPlayer';
 let getUserInput;
 const Game = {
   start,
+  populateBoard,
   get getUserInput() {
     if (typeof getUserInput !== 'function') return () => {};
     return getUserInput;
@@ -17,12 +18,6 @@ export default Game;
 async function start({
   playerOne, playerTwo, playerOneDOM, playerTwoDOM,
 }) {
-  populateBoard(playerOne.board);
-  populateBoard(playerTwo.board);
-
-  renderShips(playerOne.board, playerOneDOM);
-  renderShips(playerTwo.board, playerTwoDOM, true);
-
   while (true) {
     await handleTurn(playerOne, playerTwo, playerTwoDOM);
     if (playerTwo.board.hasAllSunk()) break;
