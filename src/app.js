@@ -25,6 +25,9 @@ const computer = new ComputerPlayer();
 window.addEventListener('resize', () => {
   renderShips(player.board, userBoardDOM);
   renderShips(computer.board, enemyBoardDOM);
+
+  makeShipsDraggable(player.board, userBoardDOM);
+  makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
 });
 
 Game.populateBoard(player.board);
@@ -33,7 +36,7 @@ Game.populateBoard(computer.board);
 renderShips(player.board, userBoardDOM);
 renderShips(computer.board, enemyBoardDOM, true);
 
-makeShipsDraggable(userBoardDOM);
+makeShipsDraggable(player.board, userBoardDOM);
 makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
 
 // Game.start({
@@ -49,9 +52,11 @@ const dragInfo = {
   ship: null,
   shipBlock: null,
   shipBlockIndex: -1,
+  board: null,
+  boardDOM: null,
 };
 
-function makeShipsDraggable(boardDOM) {
+function makeShipsDraggable(board, boardDOM) {
   boardDOM.querySelectorAll('.ship').forEach((ship) => {
     ship.draggable = true;
 
@@ -64,6 +69,9 @@ function makeShipsDraggable(boardDOM) {
 
     ship.addEventListener('dragstart', () => {
       dragInfo.ship = ship;
+      dragInfo.board = board;
+      dragInfo.boardDOM = boardDOM;
+
       makeDroppable([...ship.children].filter((shipBlock) => (shipBlock !== dragInfo.shipBlock)));
     });
 
@@ -72,6 +80,10 @@ function makeShipsDraggable(boardDOM) {
       dragInfo.shipBlock = null;
       dragInfo.shipBlockIndex = -1;
       removeDroppable([...ship.children]);
+
+      renderShips(player.board, userBoardDOM);
+      makeShipsDraggable(player.board, userBoardDOM);
+      makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
     });
   });
 }
@@ -96,5 +108,24 @@ function dragOver(e) {
 
 function drop(e) {
   e.preventDefault();
-  console.log(e.target);
+
+  const origX = Number(dragInfo.ship.dataset.x);
+  const origY = Number(dragInfo.ship.dataset.y);
+  const draggedX = Number(dragInfo.shipBlock.dataset.x);
+  const draggedY = Number(dragInfo.shipBlock.dataset.y);
+  const offsetX = draggedX - origX;
+  const offsetY = draggedY - origY;
+
+  const newX = Number(e.target.dataset.x);
+  const newY = Number(e.target.dataset.y);
+
+  const { board } = dragInfo;
+  const { ship, direction } = board.board[origY][origX];
+
+  board.removeShip(ship);
+
+  const placed = board.placeShip(newX - offsetX, newY - offsetY, ship.length, direction);
+  if (!placed) {
+    board.placeShip(origX, origY, ship.length, direction);
+  }
 }
