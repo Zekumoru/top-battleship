@@ -27,6 +27,7 @@ window.addEventListener('resize', () => {
   renderShips(computer.board, enemyBoardDOM);
 
   makeShipsDraggable(player.board, userBoardDOM);
+  makeShipsRotatable(player.board, userBoardDOM);
   makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
 });
 
@@ -37,16 +38,17 @@ renderShips(player.board, userBoardDOM);
 renderShips(computer.board, enemyBoardDOM, true);
 
 makeShipsDraggable(player.board, userBoardDOM);
+makeShipsRotatable(player.board, userBoardDOM);
 makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
 
-// Game.start({
-//   playerOne: player,
-//   playerTwo: computer,
-//   playerOneDOM: userBoardDOM,
-//   playerTwoDOM: enemyBoardDOM,
-// }).then((winner) => {
-//   console.log(`${winner.name} wins!`);
-// });
+Game.start({
+  playerOne: player,
+  playerTwo: computer,
+  playerOneDOM: userBoardDOM,
+  playerTwoDOM: enemyBoardDOM,
+}).then((winner) => {
+  console.log(`${winner.name} wins!`);
+});
 
 const dragInfo = {
   ship: null,
@@ -83,6 +85,7 @@ function makeShipsDraggable(board, boardDOM) {
 
       renderShips(player.board, userBoardDOM);
       makeShipsDraggable(player.board, userBoardDOM);
+      makeShipsRotatable(player.board, userBoardDOM);
       makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
     });
   });
@@ -128,4 +131,26 @@ function drop(e) {
   if (!placed) {
     board.placeShip(origX, origY, ship.length, direction);
   }
+}
+
+function makeShipsRotatable(board, boardDOM) {
+  boardDOM.querySelectorAll('.ship').forEach((shipElement) => {
+    shipElement.addEventListener('dblclick', () => {
+      const x = Number(shipElement.dataset.x);
+      const y = Number(shipElement.dataset.y);
+      const { ship, direction } = board.board[y][x];
+      const newDirection = (direction === 'horizontal') ? 'vertical' : 'horizontal';
+
+      board.removeShip(ship);
+
+      const placed = board.placeShip(x, y, ship.length, newDirection);
+      if (!placed) {
+        board.placeShip(x, y, ship.length, direction);
+      }
+
+      renderShips(player.board, userBoardDOM);
+      makeShipsDraggable(player.board, userBoardDOM);
+      makeShipsRotatable(player.board, userBoardDOM);
+    });
+  });
 }
