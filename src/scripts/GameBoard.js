@@ -33,7 +33,7 @@ export default class GameBoard {
       if ((y + length - 1) >= BOARD_SIZE) return false;
 
       for (let i = length - 1; i >= 0; i--) {
-        if (this.#isCoordNearShips(x, y + i)) return false;
+        if (this.isCoordNearShips(x, y + i)) return false;
       }
 
       ship = new Ship(length);
@@ -46,7 +46,7 @@ export default class GameBoard {
       if ((x + length - 1) >= BOARD_SIZE) return false;
 
       for (let i = length - 1; i >= 0; i--) {
-        if (this.#isCoordNearShips(x + i, y)) return false;
+        if (this.isCoordNearShips(x + i, y)) return false;
       }
 
       ship = new Ship(length);
@@ -112,6 +112,22 @@ export default class GameBoard {
     return outcome;
   }
 
+  isCoordNearShips(x, y) {
+    for (let i = -1; i < 2; i++) {
+      const aY = y + i;
+      if (aY < 0 || aY >= BOARD_SIZE) continue;
+
+      for (let j = -1; j < 2; j++) {
+        const aX = x + j;
+        if (aX < 0 || aX >= BOARD_SIZE) continue;
+
+        if (this.#board[aY][aX].ship !== null) return true;
+      }
+    }
+
+    return false;
+  }
+
   #initBoard(rows, cols) {
     this.#board = [];
 
@@ -128,21 +144,5 @@ export default class GameBoard {
 
       this.#board.push(row);
     }
-  }
-
-  #isCoordNearShips(x, y) {
-    for (let i = -1; i < 2; i++) {
-      const aY = y + i;
-      if (aY < 0 || aY >= BOARD_SIZE) continue;
-
-      for (let j = -1; j < 2; j++) {
-        const aX = x + j;
-        if (aX < 0 || aX >= BOARD_SIZE) continue;
-
-        if (this.#board[aY][aX].ship !== null) return true;
-      }
-    }
-
-    return false;
   }
 }
