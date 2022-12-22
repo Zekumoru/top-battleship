@@ -62,10 +62,15 @@ html {
 .ship {
   position: absolute;
   border: 4px solid lightblue;
+  background-color: rgba(78, 189, 199, 0.2);
   touch-action: none;
+}
+
+.ship-blocks {
+  display: flex;
+  position: absolute;
 }
 
 .ship-block {
   flex: 1;
-  background-color: rgba(78, 189, 199, 0.2);
 }

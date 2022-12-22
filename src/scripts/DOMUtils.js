@@ -90,16 +90,23 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       shipElement.style.left = `${left}px`;
       shipElement.addEventListener('click', null, true);
 
-      shipElement.style.display = 'flex';
-      if (direction === 'vertical') shipElement.style.flexDirection = 'column';
+      const shipBlocks = document.createElement('div');
+      shipBlocks.className = 'ship-blocks';
+      shipBlocks.style.top = `-${borderSize * 2}px`;
+      shipBlocks.style.left = `-${borderSize * 2}px`;
+      shipBlocks.style.width = `${width}px`;
+      shipBlocks.style.height = `${height}px`;
+
+      if (direction === 'vertical') shipBlocks.style.flexDirection = 'column';
       for (let i = 0; i < ship.length; i++) {
         const shipBlock = document.createElement('div');
         shipBlock.className = 'ship-block';
         shipBlock.dataset.x = (direction === 'horizontal') ? x + i : x;
         shipBlock.dataset.y = (direction === 'vertical') ? y + i : y;
-        shipElement.appendChild(shipBlock);
+        shipBlocks.appendChild(shipBlock);
       }
 
+      shipElement.appendChild(shipBlocks);
       boardDOM.appendChild(shipElement);
     });
   });

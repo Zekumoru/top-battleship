@@ -121,8 +121,9 @@ function makeDroppable() {
 
 function makeShipsRotatable(board, boardDOM) {
   interact('.ship-block').on('doubletap', (event) => {
-    const x = Number(event.target.parentNode.dataset.x);
-    const y = Number(event.target.parentNode.dataset.y);
+    const shipElement = event.target.closest('.ship');
+    const x = Number(shipElement.dataset.x);
+    const y = Number(shipElement.dataset.y);
     const { ship, direction } = board.board[y][x];
     const newDirection = (direction === 'horizontal') ? 'vertical' : 'horizontal';
 
