@@ -2,6 +2,7 @@
 import '@mdi/font/css/materialdesignicons.css';
 import 'normalize.css';
 import './style.css';
+import interact from 'interactjs';
 import { renderBoard, renderShips } from './scripts/DOMUtils';
 import Game from './scripts/Game';
 import Player from './scripts/Player';
@@ -39,7 +40,7 @@ renderShips(computer.board, enemyBoardDOM, true);
 
 makeShipsDraggable(player.board, userBoardDOM);
 makeShipsRotatable(player.board, userBoardDOM);
-makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
+makeDroppable(userBoardDOM);
 
 Game.start({
   playerOne: player,
@@ -59,42 +60,80 @@ const dragInfo = {
 };
 
 function makeShipsDraggable(board, boardDOM) {
-  boardDOM.querySelectorAll('.ship').forEach((ship) => {
-    ship.draggable = true;
+  const position = { x: 0, y: 0 };
+  let clonedShip = null;
 
-    [...ship.children].forEach((shipBlock, index) => {
-      shipBlock.addEventListener('mousedown', () => {
-        dragInfo.shipBlock = shipBlock;
-        dragInfo.shipBlockIndex = index;
+  interact('.ship').draggable({
+    listeners: {
+      start(event) {
+        clonedShip = event.target.cloneNode(true);
+        clonedShip.style.opacity = '0.6';
+        boardDOM.appendChild(clonedShip);
+        event.target.style.touchAction = 'none';
+        position.x = 0;
+        position.y = 0;
+      },
+      move(event) {
+        position.x += event.dx;
+        position.y += event.dy;
+
+        event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+      },
+      end(event) {
+        clonedShip.remove();
+        event.target.style.transform = '';
+      },
+    },
+  });
+
+  // eslint-disable-next-line no-unused-expressions
+  (() => {
+    boardDOM.querySelectorAll('.ship').forEach((ship) => {
+      ship.classList.add('draggable');
+
+      [...ship.children].forEach((shipBlock, index) => {
+        shipBlock.addEventListener('mousedown', () => {
+          dragInfo.shipBlock = shipBlock;
+          dragInfo.shipBlockIndex = index;
+        });
       });
-    });
 
-    ship.addEventListener('dragstart', () => {
-      dragInfo.ship = ship;
-      dragInfo.board = board;
-      dragInfo.boardDOM = boardDOM;
+      ship.addEventListener('dragstart', () => {
+        dragInfo.ship = ship;
+        dragInfo.board = board;
+        dragInfo.boardDOM = boardDOM;
 
-      makeDroppable([...ship.children].filter((shipBlock) => (shipBlock !== dragInfo.shipBlock)));
-    });
+        makeDroppable([...ship.children].filter((shipBlock) => (shipBlock !== dragInfo.shipBlock)));
+      });
 
-    ship.addEventListener('dragend', () => {
-      dragInfo.ship = null;
-      dragInfo.shipBlock = null;
-      dragInfo.shipBlockIndex = -1;
-      removeDroppable([...ship.children]);
+      ship.addEventListener('dragend', () => {
+        dragInfo.ship = null;
+        dragInfo.shipBlock = null;
+        dragInfo.shipBlockIndex = -1;
+        removeDroppable([...ship.children]);
 
-      renderShips(player.board, userBoardDOM);
-      makeShipsDraggable(player.board, userBoardDOM);
-      makeShipsRotatable(player.board, userBoardDOM);
-      makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
+        renderShips(player.board, userBoardDOM);
+        makeShipsDraggable(player.board, userBoardDOM);
+        makeShipsRotatable(player.board, userBoardDOM);
+        makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
+      });
     });
   });
 }
 
-function makeDroppable(array) {
-  array.forEach((item) => {
-    item.addEventListener('dragover', dragOver);
-    item.addEventListener('drop', drop);
+function makeDroppable(boardDOM) {
+  interact('.game-cell').dropzone({
+    ondrop(event) {
+      console.log(event.target);
+    },
+  });
+
+  // eslint-disable-next-line no-unused-expressions
+  (() => {
+    array.forEach((item) => {
+      item.addEventListener('dragover', dragOver);
+      item.addEventListener('drop', drop);
+    });
   });
 }
 
