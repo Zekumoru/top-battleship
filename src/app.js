@@ -26,10 +26,6 @@ const computer = new ComputerPlayer();
 window.addEventListener('resize', () => {
   renderShips(player.board, userBoardDOM);
   renderShips(computer.board, enemyBoardDOM, true);
-
-  makeShipsDraggable(player.board, userBoardDOM);
-  makeShipsRotatable(player.board, userBoardDOM);
-  makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
 });
 
 Game.populateBoard(player.board);
@@ -54,7 +50,6 @@ Game.start({
 const dragInfo = {
   ship: null,
   shipBlock: null,
-  shipBlockIndex: -1,
   board: null,
   boardDOM: null,
 };
@@ -69,9 +64,14 @@ function makeShipsDraggable(board, boardDOM) {
         clonedShip = event.target.cloneNode(true);
         clonedShip.style.opacity = '0.6';
         boardDOM.appendChild(clonedShip);
-        event.target.style.touchAction = 'none';
+
         position.x = 0;
         position.y = 0;
+
+        dragInfo.ship = event.target;
+        dragInfo.board = board;
+        dragInfo.boardDOM = boardDOM;
+        dragInfo.moving = true;
       },
       move(event) {
         position.x += event.dx;
@@ -82,94 +82,41 @@ function makeShipsDraggable(board, boardDOM) {
       end(event) {
         clonedShip.remove();
         event.target.style.transform = '';
+        renderShips(player.board, userBoardDOM);
+        dragInfo.moving = false;
       },
     },
   });
 
-  // eslint-disable-next-line no-unused-expressions
-  (() => {
-    boardDOM.querySelectorAll('.ship').forEach((ship) => {
-      ship.classList.add('draggable');
-
-      [...ship.children].forEach((shipBlock, index) => {
-        shipBlock.addEventListener('mousedown', () => {
-          dragInfo.shipBlock = shipBlock;
-          dragInfo.shipBlockIndex = index;
-        });
-      });
-
-      ship.addEventListener('dragstart', () => {
-        dragInfo.ship = ship;
-        dragInfo.board = board;
-        dragInfo.boardDOM = boardDOM;
-
-        makeDroppable([...ship.children].filter((shipBlock) => (shipBlock !== dragInfo.shipBlock)));
-      });
-
-      ship.addEventListener('dragend', () => {
-        dragInfo.ship = null;
-        dragInfo.shipBlock = null;
-        dragInfo.shipBlockIndex = -1;
-        removeDroppable([...ship.children]);
-
-        renderShips(player.board, userBoardDOM);
-        makeShipsDraggable(player.board, userBoardDOM);
-        makeShipsRotatable(player.board, userBoardDOM);
-        makeDroppable(userBoardDOM.querySelectorAll('.game-cell'));
-      });
-    });
+  interact('.ship-block').on('down', (event) => {
+    dragInfo.shipBlock = event.target;
   });
 }
 
-function makeDroppable(boardDOM) {
+function makeDroppable() {
   interact('.game-cell').dropzone({
     ondrop(event) {
-      console.log(event.target);
+      const origX = Number(dragInfo.ship.dataset.x);
+      const origY = Number(dragInfo.ship.dataset.y);
+      const draggedShipBlockX = Number(dragInfo.shipBlock.dataset.x);
+      const draggedShipBlockY = Number(dragInfo.shipBlock.dataset.y);
+      const offsetX = draggedShipBlockX - origX;
+      const offsetY = draggedShipBlockY - origY;
+
+      const newX = Number(event.target.dataset.x);
+      const newY = Number(event.target.dataset.y);
+
+      const { board } = dragInfo;
+      const { ship, direction } = board.board[origY][origX];
+
+      board.removeShip(ship);
+
+      const placed = board.placeShip(newX - offsetX, newY - offsetY, ship.length, direction);
+      if (!placed) {
+        board.placeShip(origX, origY, ship.length, direction);
+      }
     },
   });
-
-  // eslint-disable-next-line no-unused-expressions
-  (() => {
-    array.forEach((item) => {
-      item.addEventListener('dragover', dragOver);
-      item.addEventListener('drop', drop);
-    });
-  });
-}
-
-function removeDroppable(array) {
-  array.forEach((item) => {
-    item.removeEventListener('dragover', dragOver);
-    item.removeEventListener('drop', drop);
-  });
-}
-
-function dragOver(e) {
-  e.preventDefault();
-}
-
-function drop(e) {
-  e.preventDefault();
-
-  const origX = Number(dragInfo.ship.dataset.x);
-  const origY = Number(dragInfo.ship.dataset.y);
-  const draggedX = Number(dragInfo.shipBlock.dataset.x);
-  const draggedY = Number(dragInfo.shipBlock.dataset.y);
-  const offsetX = draggedX - origX;
-  const offsetY = draggedY - origY;
-
-  const newX = Number(e.target.dataset.x);
-  const newY = Number(e.target.dataset.y);
-
-  const { board } = dragInfo;
-  const { ship, direction } = board.board[origY][origX];
-
-  board.removeShip(ship);
-
-  const placed = board.placeShip(newX - offsetX, newY - offsetY, ship.length, direction);
-  if (!placed) {
-    board.placeShip(origX, origY, ship.length, direction);
-  }
 }
 
 function makeShipsRotatable(board, boardDOM) {
