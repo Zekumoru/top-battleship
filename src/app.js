@@ -24,7 +24,7 @@ const computer = new ComputerPlayer();
 
 window.addEventListener('resize', () => {
   renderShips(player.board, userBoardDOM);
-  renderShips(computer.board, enemyBoardDOM);
+  renderShips(computer.board, enemyBoardDOM, true);
 
   makeShipsDraggable(player.board, userBoardDOM);
   makeShipsRotatable(player.board, userBoardDOM);
