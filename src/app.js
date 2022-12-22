@@ -36,7 +36,7 @@ renderShips(computer.board, enemyBoardDOM, true);
 
 makeShipsDraggable(player.board, userBoardDOM);
 makeShipsRotatable(player.board, userBoardDOM);
-makeDroppable(userBoardDOM);
+makeDroppable();
 
 Game.start({
   playerOne: player,
@@ -49,6 +49,8 @@ Game.start({
 
 const dragInfo = {
   ship: null,
+  shipDirection: 'none',
+  shipElement: null,
   shipBlock: null,
   board: null,
   boardDOM: null,
@@ -68,10 +70,16 @@ function makeShipsDraggable(board, boardDOM) {
         position.x = 0;
         position.y = 0;
 
-        dragInfo.ship = event.target;
+        const x = Number(event.target.dataset.x);
+        const y = Number(event.target.dataset.y);
+
+        dragInfo.ship = board.board[y][x].ship;
+        dragInfo.shipDirection = board.board[y][x].direction;
+        board.removeShip(dragInfo.ship);
+
+        dragInfo.shipElement = event.target;
         dragInfo.board = board;
         dragInfo.boardDOM = boardDOM;
-        dragInfo.moving = true;
       },
       move(event) {
         position.x += event.dx;
@@ -82,8 +90,15 @@ function makeShipsDraggable(board, boardDOM) {
       end(event) {
         clonedShip.remove();
         event.target.style.transform = '';
+
+        const x = Number(event.target.dataset.x);
+        const y = Number(event.target.dataset.y);
+        const { ship, shipDirection: direction } = dragInfo;
+        if (ship !== null) {
+          board.placeShip(x, y, ship.length, direction);
+        }
+
         renderShips(player.board, userBoardDOM);
-        dragInfo.moving = false;
       },
     },
   });
@@ -95,26 +110,43 @@ function makeShipsDraggable(board, boardDOM) {
 
 function makeDroppable() {
   interact('.game-cell').dropzone({
-    ondrop(event) {
-      const origX = Number(dragInfo.ship.dataset.x);
-      const origY = Number(dragInfo.ship.dataset.y);
-      const draggedShipBlockX = Number(dragInfo.shipBlock.dataset.x);
-      const draggedShipBlockY = Number(dragInfo.shipBlock.dataset.y);
-      const offsetX = draggedShipBlockX - origX;
-      const offsetY = draggedShipBlockY - origY;
+    listeners: {
+      dragenter(event) {
+        let x = Number(event.target.dataset.x);
+        let y = Number(event.target.dataset.y);
+        const { board, ship, shipDirection: direction } = dragInfo;
+        const draggedShipBlockIndex = Number(dragInfo.shipBlock.dataset.index);
 
-      const newX = Number(event.target.dataset.x);
-      const newY = Number(event.target.dataset.y);
+        if (direction === 'horizontal') x -= draggedShipBlockIndex;
+        else y -= draggedShipBlockIndex;
 
-      const { board } = dragInfo;
-      const { ship, direction } = board.board[origY][origX];
+        if (!board.canShipBePlaced(x, y, ship.length, direction)) {
+          event.relatedTarget.classList.add('cant-place');
+        }
+        else {
+          event.relatedTarget.classList.remove('cant-place');
+        }
+      },
+      drop(event) {
+        const origX = Number(dragInfo.shipElement.dataset.x);
+        const origY = Number(dragInfo.shipElement.dataset.y);
+        const draggedShipBlockX = Number(dragInfo.shipBlock.dataset.x);
+        const draggedShipBlockY = Number(dragInfo.shipBlock.dataset.y);
+        const offsetX = draggedShipBlockX - origX;
+        const offsetY = draggedShipBlockY - origY;
 
-      board.removeShip(ship);
+        const newX = Number(event.target.dataset.x);
+        const newY = Number(event.target.dataset.y);
 
-      const placed = board.placeShip(newX - offsetX, newY - offsetY, ship.length, direction);
-      if (!placed) {
-        board.placeShip(origX, origY, ship.length, direction);
-      }
+        const { ship, board, shipDirection: direction } = dragInfo;
+
+        const placed = board.placeShip(newX - offsetX, newY - offsetY, ship.length, direction);
+        if (!placed) {
+          board.placeShip(origX, origY, ship.length, direction);
+        }
+
+        dragInfo.ship = null;
+      },
     },
   });
 }

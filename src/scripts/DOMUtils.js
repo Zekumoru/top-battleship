@@ -103,6 +103,7 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
         shipBlock.className = 'ship-block';
         shipBlock.dataset.x = (direction === 'horizontal') ? x + i : x;
         shipBlock.dataset.y = (direction === 'vertical') ? y + i : y;
+        shipBlock.dataset.index = i;
         shipBlocks.appendChild(shipBlock);
       }
 
