@@ -67,6 +67,8 @@ function makeShipsDraggable(board, boardDOM) {
         clonedShip.style.opacity = '0.6';
         boardDOM.appendChild(clonedShip);
 
+        event.target.classList.add('dragging');
+
         position.x = 0;
         position.y = 0;
 
@@ -90,6 +92,7 @@ function makeShipsDraggable(board, boardDOM) {
       end(event) {
         clonedShip.remove();
         event.target.style.transform = '';
+        event.target.classList.remove('dragging');
 
         const x = Number(event.target.dataset.x);
         const y = Number(event.target.dataset.y);

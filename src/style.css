@@ -71,6 +71,10 @@ html {
   background-color: rgba(195, 60, 60, 0.2);
 }
 
+.ship.dragging {
+  z-index: 1;
+}
+
 .ship-blocks {
   display: flex;
   position: absolute;
