@@ -120,23 +120,19 @@ function makeDroppable() {
 }
 
 function makeShipsRotatable(board, boardDOM) {
-  boardDOM.querySelectorAll('.ship').forEach((shipElement) => {
-    shipElement.addEventListener('dblclick', () => {
-      const x = Number(shipElement.dataset.x);
-      const y = Number(shipElement.dataset.y);
-      const { ship, direction } = board.board[y][x];
-      const newDirection = (direction === 'horizontal') ? 'vertical' : 'horizontal';
+  interact('.ship-block').on('doubletap', (event) => {
+    const x = Number(event.target.parentNode.dataset.x);
+    const y = Number(event.target.parentNode.dataset.y);
+    const { ship, direction } = board.board[y][x];
+    const newDirection = (direction === 'horizontal') ? 'vertical' : 'horizontal';
 
-      board.removeShip(ship);
+    board.removeShip(ship);
 
-      const placed = board.placeShip(x, y, ship.length, newDirection);
-      if (!placed) {
-        board.placeShip(x, y, ship.length, direction);
-      }
+    const placed = board.placeShip(x, y, ship.length, newDirection);
+    if (!placed) {
+      board.placeShip(x, y, ship.length, direction);
+    }
 
-      renderShips(player.board, userBoardDOM);
-      makeShipsDraggable(player.board, userBoardDOM);
-      makeShipsRotatable(player.board, userBoardDOM);
-    });
+    renderShips(board, boardDOM);
   });
 }
