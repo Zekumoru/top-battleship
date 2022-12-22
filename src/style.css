@@ -62,9 +62,24 @@ html {
 .ship {
   position: absolute;
   border: 4px solid lightblue;
+  background-color: rgba(78, 189, 199, 0.2);
+  touch-action: none;
+}
+
+.ship.cant-place {
+  border: 4px solid rgb(255, 90, 90);
+  background-color: rgba(195, 60, 60, 0.2);
+}
+
+.ship.dragging {
+  z-index: 1;
+}
+
+.ship-blocks {
+  display: flex;
+  position: absolute;
 }
 
 .ship-block {
   flex: 1;
-  background-color: rgba(78, 189, 199, 0.2);
 }

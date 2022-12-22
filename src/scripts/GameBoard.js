@@ -25,17 +25,10 @@ export default class GameBoard {
   }
 
   placeShip(x, y, length = 1, direction = 'horizontal') {
-    if (x < 0 || x >= BOARD_SIZE) return false;
-    if (y < 0 || y >= BOARD_SIZE) return false;
+    if (!this.canShipBePlaced(x, y, length, direction)) return false;
 
     let ship;
     if (direction === 'vertical') {
-      if ((y + length - 1) >= BOARD_SIZE) return false;
-
-      for (let i = length - 1; i >= 0; i--) {
-        if (this.#isCoordNearShips(x, y + i)) return false;
-      }
-
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y + i][x].ship = ship;
@@ -43,12 +36,6 @@ export default class GameBoard {
       }
     }
     else {
-      if ((x + length - 1) >= BOARD_SIZE) return false;
-
-      for (let i = length - 1; i >= 0; i--) {
-        if (this.#isCoordNearShips(x + i, y)) return false;
-      }
-
       ship = new Ship(length);
       for (let i = length - 1; i >= 0; i--) {
         this.#board[y][x + i].ship = ship;
@@ -57,6 +44,27 @@ export default class GameBoard {
     }
 
     this.#ships.push(ship);
+    return true;
+  }
+
+  canShipBePlaced(x, y, length = 1, direction = 'horizontal') {
+    if (x < 0 || x >= BOARD_SIZE) return false;
+    if (y < 0 || y >= BOARD_SIZE) return false;
+
+    if (direction === 'vertical') {
+      if ((y + length - 1) >= BOARD_SIZE) return false;
+
+      for (let i = length - 1; i >= 0; i--) {
+        if (this.#isCoordNearShips(x, y + i)) return false;
+      }
+    }
+    else {
+      if ((x + length - 1) >= BOARD_SIZE) return false;
+
+      for (let i = length - 1; i >= 0; i--) {
+        if (this.#isCoordNearShips(x + i, y)) return false;
+      }
+    }
 
     return true;
   }
