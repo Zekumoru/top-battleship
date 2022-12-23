@@ -47,6 +47,12 @@ body {
   color: white;
 }
 
+.tip {
+  font-size: 0.8rem;
+  text-align: center;
+  margin: 8px 0;
+}
+
 .start-game-btn {
   width: 100%;
   background-color: white;
