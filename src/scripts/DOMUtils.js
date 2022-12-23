@@ -1,7 +1,12 @@
+import interact from 'interactjs';
 import { BOARD_SIZE } from './GameBoard';
 
 export default {
   renderBoard,
+  renderShips,
+  makeShipsDraggable,
+  makeDroppable,
+  makeShipsRotatable,
 };
 
 export function renderBoard(gameBoard) {
@@ -58,7 +63,7 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       }
 
       if (ship === null) return;
-      if (hideShips) return; // for computer's board so it's hidden for the player
+      if (hideShips) return; // for computer's board so it's hidden to the player
 
       if (x > 0 && playerBoard.board[y][x - 1].ship === ship) return;
       if (y > 0 && playerBoard.board[y - 1][x].ship === ship) return;
@@ -110,5 +115,131 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       shipElement.appendChild(shipBlocks);
       boardDOM.appendChild(shipElement);
     });
+  });
+}
+
+const dragInfo = {
+  ship: null,
+  shipDirection: 'none',
+  shipElement: null,
+  shipBlock: null,
+  board: null,
+  boardDOM: null,
+};
+
+export function makeShipsDraggable(board, boardDOM) {
+  const position = { x: 0, y: 0 };
+  let clonedShip = null;
+
+  interact('.ship').draggable({
+    listeners: {
+      start(event) {
+        clonedShip = event.target.cloneNode(true);
+        clonedShip.style.opacity = '0.6';
+        boardDOM.appendChild(clonedShip);
+
+        event.target.classList.add('dragging');
+
+        position.x = 0;
+        position.y = 0;
+
+        const x = Number(event.target.dataset.x);
+        const y = Number(event.target.dataset.y);
+
+        dragInfo.ship = board.board[y][x].ship;
+        dragInfo.shipDirection = board.board[y][x].direction;
+        board.removeShip(dragInfo.ship);
+
+        dragInfo.shipElement = event.target;
+        dragInfo.board = board;
+        dragInfo.boardDOM = boardDOM;
+      },
+      move(event) {
+        position.x += event.dx;
+        position.y += event.dy;
+
+        event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+      },
+      end(event) {
+        clonedShip.remove();
+        event.target.style.transform = '';
+        event.target.classList.remove('dragging');
+
+        const x = Number(event.target.dataset.x);
+        const y = Number(event.target.dataset.y);
+        const { ship, shipDirection: direction } = dragInfo;
+        if (ship !== null) {
+          board.placeShip(x, y, ship.length, direction);
+        }
+
+        renderShips(board, boardDOM);
+      },
+    },
+  });
+
+  interact('.ship-block').on('down', (event) => {
+    dragInfo.shipBlock = event.target;
+  });
+}
+
+export function makeDroppable() {
+  interact('.game-cell').dropzone({
+    listeners: {
+      dragenter(event) {
+        let x = Number(event.target.dataset.x);
+        let y = Number(event.target.dataset.y);
+        const { board, ship, shipDirection: direction } = dragInfo;
+        const draggedShipBlockIndex = Number(dragInfo.shipBlock.dataset.index);
+
+        if (direction === 'horizontal') x -= draggedShipBlockIndex;
+        else y -= draggedShipBlockIndex;
+
+        if (!board.canShipBePlaced(x, y, ship.length, direction)) {
+          event.relatedTarget.classList.add('cant-place');
+        }
+        else {
+          event.relatedTarget.classList.remove('cant-place');
+        }
+      },
+      drop(event) {
+        const origX = Number(dragInfo.shipElement.dataset.x);
+        const origY = Number(dragInfo.shipElement.dataset.y);
+        const draggedShipBlockX = Number(dragInfo.shipBlock.dataset.x);
+        const draggedShipBlockY = Number(dragInfo.shipBlock.dataset.y);
+        const offsetX = draggedShipBlockX - origX;
+        const offsetY = draggedShipBlockY - origY;
+
+        const newX = Number(event.target.dataset.x);
+        const newY = Number(event.target.dataset.y);
+
+        const { ship, board, shipDirection: direction } = dragInfo;
+
+        const placed = board.placeShip(newX - offsetX, newY - offsetY, ship.length, direction);
+        if (!placed) {
+          board.placeShip(origX, origY, ship.length, direction);
+        }
+
+        dragInfo.ship = null;
+      },
+    },
+  });
+}
+
+export function makeShipsRotatable(board, boardDOM) {
+  interact('.ship-block').on('doubletap', (event) => {
+    const shipElement = event.target.closest('.ship');
+    const x = Number(shipElement.dataset.x);
+    const y = Number(shipElement.dataset.y);
+    const { ship, direction } = board.board[y][x];
+    const newDirection = (direction === 'horizontal') ? 'vertical' : 'horizontal';
+
+    board.removeShip(ship);
+
+    const placed = board.placeShip(x, y, ship.length, newDirection);
+    if (!placed) {
+      board.placeShip(x, y, ship.length, direction);
+    }
+
+    renderShips(board, boardDOM);
   });
 }
