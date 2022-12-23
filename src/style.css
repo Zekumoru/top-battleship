@@ -24,6 +24,7 @@ html {
 body {
   padding: 0 16px;
   margin-bottom: 32px;
+  overflow-x: hidden;
 }
 
 .title {
