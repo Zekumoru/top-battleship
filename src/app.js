@@ -1,7 +1,7 @@
 import 'normalize.css';
 import './style.css';
 import {
-  renderBoard, renderShips, makeShipsDraggable, makeDroppable, makeShipsRotatable,
+  renderBoard, renderShips, makeShipsDraggable, makeDroppable, makeShipsRotatable, removeInteracts,
 } from './scripts/DOMUtils';
 import Game from './scripts/Game';
 import Player from './scripts/Player';
@@ -30,6 +30,10 @@ renderShips(player.board, userBoardDOM);
 makeShipsDraggable(player.board, userBoardDOM);
 makeShipsRotatable(player.board, userBoardDOM);
 makeDroppable();
+
+document.querySelector('#start-game-btn').addEventListener('click', () => {
+  removeInteracts(['ship', 'ship-block', 'game-cell']);
+});
 
 // Game.start({
 //   playerOne: player,

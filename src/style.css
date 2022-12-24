@@ -115,6 +115,9 @@ body {
   position: absolute;
   border: 4px solid lightblue;
   background-color: rgba(78, 189, 199, 0.2);
+}
+
+.ship.interactable {
   touch-action: none;
   cursor: move;
 }

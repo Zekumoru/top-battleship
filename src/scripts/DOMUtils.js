@@ -7,6 +7,17 @@ export default {
   makeShipsDraggable,
   makeDroppable,
   makeShipsRotatable,
+  removeInteracts,
+};
+
+const dragInfo = {
+  ship: null,
+  shipDirection: 'none',
+  shipElement: null,
+  shipBlock: null,
+  board: null,
+  boardDOM: null,
+  interactEnabled: false,
 };
 
 export function renderBoard(gameBoard) {
@@ -94,6 +105,7 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       shipElement.style.top = `${top}px`;
       shipElement.style.left = `${left}px`;
       shipElement.addEventListener('click', null, true);
+      if (dragInfo.interactEnabled) shipElement.classList.add('interactable');
 
       const shipBlocks = document.createElement('div');
       shipBlocks.className = 'ship-blocks';
@@ -118,18 +130,10 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
   });
 }
 
-const dragInfo = {
-  ship: null,
-  shipDirection: 'none',
-  shipElement: null,
-  shipBlock: null,
-  board: null,
-  boardDOM: null,
-};
-
 export function makeShipsDraggable(board, boardDOM) {
   const position = { x: 0, y: 0 };
   let clonedShip = null;
+  dragInfo.interactEnabled = true;
 
   interact('.ship').draggable({
     listeners: {
@@ -241,5 +245,13 @@ export function makeShipsRotatable(board, boardDOM) {
     }
 
     renderShips(board, boardDOM);
+  });
+}
+
+export function removeInteracts(classList) {
+  dragInfo.interactEnabled = false;
+
+  classList.forEach((className) => {
+    interact(`.${className}`).unset();
   });
 }
