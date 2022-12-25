@@ -158,6 +158,10 @@ body {
   border-radius: 4px;
 }
 
+.fleet-indicator .ship.sunk {
+  background-color: red;
+}
+
 .fleet-indicator .ship-block {
   flex: 1;
   border-right: 2px solid var(--fg-color);

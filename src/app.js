@@ -1,13 +1,14 @@
 import 'normalize.css';
 import './style.css';
 import {
-  renderBoard, renderShips, makeShipsDraggable, makeDroppable, makeShipsRotatable, removeInteracts,
+  renderBoard, renderShips, makeShipsDraggable, makeDroppable, makeShipsRotatable, removeInteracts, renderFleetIndicator,
 } from './scripts/DOMUtils';
 import Game from './scripts/Game';
 import Player from './scripts/Player';
 import ComputerPlayer from './scripts/ComputerPlayer';
 
 const mainBoardDOM = renderBoard(document.querySelector('#main-game-board'));
+const mainFleetDOM = document.querySelector('#main-board-fleet');
 const mainLabel = document.querySelector('.main-label');
 const tipParagraph = document.querySelector('.tip');
 
@@ -45,45 +46,28 @@ startGameButton.addEventListener('click', (e) => {
   tipParagraph.remove();
   mainLabel.textContent = 'Your Turn';
 
-  // add fleet indicators
-  const mainFleetDOM = document.querySelector('#main-board-fleet');
-  const shipSize = mainBoardDOM.clientWidth / 11;
-
-  player.board.ships.forEach((ship) => {
-    const shipElement = document.createElement('div');
-    shipElement.className = 'ship';
-    shipElement.style.width = `${shipSize * ship.length}px`;
-    shipElement.style.height = `${shipSize}px`;
-
-    for (let i = 0; i < ship.length; i++) {
-      const shipBlock = document.createElement('div');
-      shipBlock.className = 'ship-block';
-
-      shipElement.appendChild(shipBlock);
-    }
-
-    mainFleetDOM.insertAdjacentElement('beforeend', shipElement);
-  });
-
   // start game
   currentOpponent = computer;
   renderShips(computer.board, mainBoardDOM, true);
+  renderFleetIndicator(computer, mainFleetDOM);
 
   Game.start({
     playerOne: player,
     playerTwo: computer,
     async onTurn(player) {
-      if (player === computer) await waitMilliseconds(500);
+      if (player === computer) await waitMilliseconds(300);
     },
     async onTurnMade(player, opponent) {
       renderShips(opponent.board, mainBoardDOM, opponent === computer);
-      if (player === computer) await waitMilliseconds(1000);
+      renderFleetIndicator(opponent, mainFleetDOM);
+      if (player === computer) await waitMilliseconds(700);
     },
     async onNextTurn(player) {
       mainLabel.textContent = (player !== computer) ? 'Wait for computer' : 'Wait for your turn';
-      await waitMilliseconds(500);
+      await waitMilliseconds(300);
 
       renderShips(player.board, mainBoardDOM, player === computer);
+      renderFleetIndicator(player, mainFleetDOM);
       mainLabel.textContent = (player !== computer) ? 'Computer\'s Turn' : 'Your Turn';
       currentOpponent = player;
     },
@@ -97,3 +81,5 @@ startGameButton.addEventListener('click', (e) => {
     });
   }
 });
+
+startGameButton.click();

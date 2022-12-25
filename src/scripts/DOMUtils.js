@@ -4,6 +4,7 @@ import { BOARD_SIZE } from './GameBoard';
 export default {
   renderBoard,
   renderShips,
+  renderFleetIndicator,
   makeShipsDraggable,
   makeDroppable,
   makeShipsRotatable,
@@ -129,6 +130,32 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       shipElement.appendChild(shipBlocks);
       boardDOM.appendChild(shipElement);
     });
+  });
+}
+
+export function renderFleetIndicator(player, fleetIndicator) {
+  const shipSize = fleetIndicator.clientWidth / 11;
+  fleetIndicator.innerHTML = '';
+
+  player.board.ships.forEach((ship) => {
+    const shipElement = document.createElement('div');
+    shipElement.className = 'ship';
+    shipElement.style.width = `${shipSize * ship.length}px`;
+    shipElement.style.height = `${shipSize}px`;
+    if (ship.isSunk()) shipElement.classList.add('sunk');
+
+    for (let i = 0; i < ship.length; i++) {
+      const shipBlock = document.createElement('div');
+      shipBlock.className = 'ship-block';
+
+      shipElement.appendChild(shipBlock);
+    }
+
+    fleetIndicator.insertAdjacentElement('beforeend', shipElement);
+
+    ship.onSunk = () => {
+      shipElement.classList.add('sunk');
+    };
   });
 }
 
