@@ -15,6 +15,10 @@ export default class GameBoard {
     return Object.freeze(this.#board);
   }
 
+  get ships() {
+    return Object.freeze(this.#ships);
+  }
+
   hasAllSunk() {
     if (!this.#ships.length) return false;
 
