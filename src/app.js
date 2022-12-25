@@ -5,27 +5,30 @@ import {
 } from './scripts/DOMUtils';
 import Game from './scripts/Game';
 import Player from './scripts/Player';
+import ComputerPlayer from './scripts/ComputerPlayer';
 
 const mainBoardDOM = renderBoard(document.querySelector('#main-game-board'));
 const mainLabel = document.querySelector('.main-label');
 const tipParagraph = document.querySelector('.tip');
 
-// enemyBoardDOM.addEventListener('click', (e) => {
-//   if (!(e.target.classList.contains('game-cell') || e.target.classList.contains('ship-block'))) return;
-
-//   Game.getUserInput({
-//     board: enemyBoardDOM,
-//     ...e.target.dataset,
-//   });
-// });
-
 const player = new Player('Player');
+const computer = new ComputerPlayer();
+
+mainBoardDOM.addEventListener('click', (e) => {
+  if (!(e.target.classList.contains('game-cell') || e.target.classList.contains('ship-block'))) return;
+
+  Game.getUserInput({
+    player,
+    ...e.target.dataset,
+  });
+});
 
 window.addEventListener('resize', () => {
   renderShips(player.board, mainBoardDOM);
 });
 
 Game.populateBoard(player.board);
+Game.populateBoard(computer.board);
 
 renderShips(player.board, mainBoardDOM);
 
@@ -61,16 +64,31 @@ startGameButton.addEventListener('click', (e) => {
     mainFleetDOM.insertAdjacentElement('beforeend', shipElement);
   });
 
-  renderShips(player.board, mainBoardDOM);
+  renderShips(computer.board, mainBoardDOM, true);
+  Game.start({
+    playerOne: player,
+    playerTwo: computer,
+    async onTurn(player) {
+      if (player === computer) await waitMilliseconds(500);
+    },
+    async onTurnMade(player, opponent) {
+      renderShips(opponent.board, mainBoardDOM, opponent === computer);
+      if (player === computer) await waitMilliseconds(1000);
+    },
+    async onNextTurn(player) {
+      mainLabel.textContent = (player !== computer) ? 'Wait for computer' : 'Wait for your turn';
+      await waitMilliseconds(500);
+
+      renderShips(player.board, mainBoardDOM, player === computer);
+      mainLabel.textContent = (player !== computer) ? 'Computer\'s Turn' : 'Your Turn';
+    },
+  }).then((winner) => {
+    mainLabel.textContent = `${winner.name} wins!`;
+  });
+
+  function waitMilliseconds(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
 });
-
-startGameButton.click();
-
-// Game.start({
-//   playerOne: player,
-//   playerTwo: computer,
-//   playerOneDOM: userBoardDOM,
-//   playerTwoDOM: enemyBoardDOM,
-// }).then((winner) => {
-//   console.log(`${winner.name} wins!`);
-// });

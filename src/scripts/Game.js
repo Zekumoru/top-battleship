@@ -1,5 +1,4 @@
 /* eslint-disable no-constant-condition, no-loop-func, no-await-in-loop, no-console */
-import { renderShips } from './DOMUtils';
 import { BOARD_SIZE } from './GameBoard';
 import ComputerPlayer from './ComputerPlayer';
 
@@ -16,20 +15,22 @@ const Game = {
 export default Game;
 
 async function start({
-  playerOne, playerTwo, playerOneDOM, playerTwoDOM,
+  playerOne, playerTwo, onTurn, onTurnMade, onNextTurn,
 }) {
+  const listeners = { onTurn, onTurnMade, onNextTurn };
+
   while (true) {
-    await handleTurn(playerOne, playerTwo, playerTwoDOM);
+    await handleTurn(playerOne, playerTwo, listeners);
     if (playerTwo.board.hasAllSunk()) break;
 
-    await handleTurn(playerTwo, playerOne, playerOneDOM);
+    await handleTurn(playerTwo, playerOne, listeners);
     if (playerOne.board.hasAllSunk()) break;
   }
 
   return playerTwo.board.hasAllSunk() ? playerOne : playerTwo;
 }
 
-async function handleTurn(player, opponent, opponentBoardDOM) {
+async function handleTurn(player, opponent, listeners) {
   const isComputer = (player instanceof ComputerPlayer);
   let hit = true;
   let alreadyHit;
@@ -39,12 +40,18 @@ async function handleTurn(player, opponent, opponentBoardDOM) {
       ? player.attack()
       : (await new Promise((resolve) => { getUserInput = resolve; }));
 
-    if (!isComputer && coords.board !== opponentBoardDOM) continue;
+    if (!isComputer && coords.player !== player) continue;
     const { x, y } = coords;
 
+    if (typeof listeners.onTurn === 'function') await listeners.onTurn(player, opponent);
+
     ({ hit, alreadyHit } = opponent.board.receiveAttack(x, y));
-    renderShips(opponent.board, opponentBoardDOM, !isComputer);
-  } while (!opponent.board.hasAllSunk() && (hit || alreadyHit));
+    if (typeof listeners.onTurnMade === 'function') await listeners.onTurnMade(player, opponent, hit);
+
+    if (opponent.board.hasAllSunk()) return;
+  } while (hit || alreadyHit);
+
+  if (typeof listeners.onNextTurn === 'function') await listeners.onNextTurn(player, opponent);
 }
 
 function populateBoard(board) {
