@@ -1,10 +1,11 @@
 :root {
   --bg-color: hsl(252, 3%, 10%);
-  --fg-color: #938e94;
+  --fg-color: #808080;
   --primary-color: #557a95;
   --secondary-color: #7395ae;
   --accent-color: #b1a296;
   --navy-blue: #0d5fa7;
+  --red: #ff0000;
 }
 
 * {
@@ -115,11 +116,19 @@ body {
   border-bottom: var(--border-game-cell);
 }
 
+.game-cell.miss {
+  background-color: rgb(103, 103, 103);
+}
+
+.game-cell.hit {
+  background-color: var(--red);
+}
+
 .game-board .ship {
   position: absolute;
-  border: 4px solid lightblue;
+  border: 4px solid white;
   border-radius: 4px;
-  background-color: rgba(78, 189, 199, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .game-board .ship.interactable {
@@ -156,18 +165,18 @@ body {
 
 .fleet-indicator .ship {
   display: flex;
-  border: 4px solid lightblue;
+  border: 2px solid white;
   border-radius: 4px;
 }
 
 .fleet-indicator .ship.sunk {
-  background-color: red;
+  background-color: var(--red);
 }
 
 .fleet-indicator .ship-block {
   flex: 1;
   border-right: 2px solid var(--fg-color);
-  background-color: rgba(78, 189, 199, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .fleet-indicator .ship-block:last-child {

@@ -66,15 +66,11 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       const cell = boardDOM.children[index];
       const { ship, status, direction } = col;
 
-      cell.style = '';
+      cell.classList.remove('miss');
+      cell.classList.remove('hit');
 
-      if (status === 'miss') {
-        cell.style = 'background-color: grey;';
-      }
-
-      if (status === 'hit') {
-        cell.style = 'background-color: red;';
-      }
+      if (status === 'miss') cell.classList.add('miss');
+      if (status === 'hit') cell.classList.add('hit');
 
       if (ship === null) return;
       if (hideShips && !ship.isSunk()) return; // for computer's board so it's hidden to the player, shows the ship if it is sunk though
