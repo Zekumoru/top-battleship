@@ -65,7 +65,7 @@ startGameButton.addEventListener('click', (e) => {
       mainLabel.textContent = (player !== computer) ? 'Wait for computer' : 'Wait for your turn';
       await waitMilliseconds(300);
 
-      renderGame(opponent);
+      renderGame(player);
       mainLabel.textContent = (player !== computer) ? 'Computer\'s Turn' : 'Your Turn';
       currentOpponent = player;
     },
