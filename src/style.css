@@ -77,6 +77,10 @@ body {
   margin: 0 auto;
 }
 
+.main-game-board {
+  margin-bottom: 16px;
+}
+
 .cell {
   position: relative;
 }
@@ -111,31 +115,54 @@ body {
   border-bottom: var(--border-game-cell);
 }
 
-.ship {
+.game-board .ship {
   position: absolute;
   border: 4px solid lightblue;
+  border-radius: 4px;
   background-color: rgba(78, 189, 199, 0.2);
 }
 
-.ship.interactable {
+.game-board .ship.interactable {
   touch-action: none;
   cursor: move;
 }
 
-.ship.cant-place {
+.game-board .ship.cant-place {
   border: 4px solid rgb(255, 90, 90);
   background-color: rgba(195, 60, 60, 0.2);
 }
 
-.ship.dragging {
+.game-board .ship.dragging {
   z-index: 1;
 }
 
-.ship-blocks {
+.game-board .ship-blocks {
   display: flex;
   position: absolute;
 }
 
-.ship-block {
+.game-board .ship-block {
   flex: 1;
+}
+
+.fleet-indicator {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fleet-indicator .ship {
+  display: flex;
+  border: 4px solid lightblue;
+  border-radius: 4px;
+}
+
+.fleet-indicator .ship-block {
+  flex: 1;
+  border-right: 2px solid var(--fg-color);
+}
+
+.fleet-indicator .ship-block:last-child {
+  border-color: transparent;
 }
