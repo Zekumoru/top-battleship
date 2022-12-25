@@ -77,7 +77,7 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       }
 
       if (ship === null) return;
-      if (hideShips) return; // for computer's board so it's hidden to the player
+      if (hideShips && !ship.isSunk()) return; // for computer's board so it's hidden to the player, shows the ship if it is sunk though
 
       if (x > 0 && playerBoard.board[y][x - 1].ship === ship) return;
       if (y > 0 && playerBoard.board[y - 1][x].ship === ship) return;
