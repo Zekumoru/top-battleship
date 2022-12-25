@@ -1,10 +1,9 @@
-import EventHandler from './EventHandler';
-
 export default class Ship {
+  onHit;
+  onSunk;
   #length;
   #hits;
   #sunk;
-  #events;
 
   constructor(length) {
     if (length <= 0) throw new RangeError('invalid ship length');
@@ -12,7 +11,6 @@ export default class Ship {
     this.#hits = 0;
     this.#sunk = false;
     this.#length = length;
-    this.#events = new EventHandler();
   }
 
   get length() {
@@ -23,17 +21,13 @@ export default class Ship {
     return this.#hits;
   }
 
-  get events() {
-    return this.#events;
-  }
-
   hit() {
     this.#hits++;
-    this.#events.dispatchEvent('hit', this.#hits, this);
+    if (typeof this.onHit === 'function') this.onHit(this.#hits);
 
     if (this.#hits >= this.#length) {
       this.#sunk = true;
-      this.#events.dispatchEvent('sunk', this);
+      if (typeof this.onSunk === 'function') this.onSunk();
     }
   }
 

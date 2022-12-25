@@ -27,8 +27,8 @@ test('that hitting and sinking a ship invoke the events accordingly', () => {
   const hitListener = jest.fn();
   const sunkListener = jest.fn();
 
-  ship.events.addEventListener('hit', hitListener);
-  ship.events.addEventListener('sunk', sunkListener);
+  ship.onHit = hitListener;
+  ship.onSunk = sunkListener;
   ship.hit();
 
   expect(hitListener.mock.calls.length).not.toBe(0);
