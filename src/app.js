@@ -13,6 +13,7 @@ const tipParagraph = document.querySelector('.tip');
 
 const player = new Player('Player');
 const computer = new ComputerPlayer();
+let currentOpponent = player;
 
 mainBoardDOM.addEventListener('click', (e) => {
   if (!(e.target.classList.contains('game-cell') || e.target.classList.contains('ship-block'))) return;
@@ -24,7 +25,7 @@ mainBoardDOM.addEventListener('click', (e) => {
 });
 
 window.addEventListener('resize', () => {
-  renderShips(player.board, mainBoardDOM);
+  renderShips(currentOpponent.board, mainBoardDOM, currentOpponent !== player);
 });
 
 Game.populateBoard(player.board);
@@ -64,7 +65,10 @@ startGameButton.addEventListener('click', (e) => {
     mainFleetDOM.insertAdjacentElement('beforeend', shipElement);
   });
 
+  // start game
+  currentOpponent = computer;
   renderShips(computer.board, mainBoardDOM, true);
+
   Game.start({
     playerOne: player,
     playerTwo: computer,
@@ -81,6 +85,7 @@ startGameButton.addEventListener('click', (e) => {
 
       renderShips(player.board, mainBoardDOM, player === computer);
       mainLabel.textContent = (player !== computer) ? 'Computer\'s Turn' : 'Your Turn';
+      currentOpponent = player;
     },
   }).then((winner) => {
     mainLabel.textContent = `${winner.name} wins!`;
