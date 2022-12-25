@@ -74,12 +74,12 @@ startGameButton.addEventListener('click', (e) => {
   }).then((winner) => {
     mainLabel.textContent = `${winner.name} wins!`;
   });
-
-  function waitMilliseconds(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
 });
 
 startGameButton.click();
+
+function waitMilliseconds(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
