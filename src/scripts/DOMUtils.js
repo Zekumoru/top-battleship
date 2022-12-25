@@ -65,6 +65,8 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       const cell = boardDOM.children[index];
       const { ship, status, direction } = col;
 
+      cell.style = '';
+
       if (status === 'miss') {
         cell.style = 'background-color: grey;';
       }
