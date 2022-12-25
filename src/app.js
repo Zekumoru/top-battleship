@@ -26,7 +26,7 @@ mainBoardDOM.addEventListener('click', (e) => {
 });
 
 window.addEventListener('resize', () => {
-  renderShips(currentOpponent.board, mainBoardDOM, currentOpponent !== player);
+  renderGame(currentOpponent);
 });
 
 Game.populateBoard(player.board);
@@ -48,8 +48,8 @@ startGameButton.addEventListener('click', (e) => {
 
   // start game
   currentOpponent = computer;
-  renderShips(computer.board, mainBoardDOM, true);
   renderFleetIndicator(computer, mainFleetDOM);
+  renderShips(computer.board, mainBoardDOM, true);
 
   Game.start({
     playerOne: player,
@@ -58,16 +58,14 @@ startGameButton.addEventListener('click', (e) => {
       if (player === computer) await waitMilliseconds(300);
     },
     async onTurnMade(player, opponent) {
-      renderShips(opponent.board, mainBoardDOM, opponent === computer);
-      renderFleetIndicator(opponent, mainFleetDOM);
+      renderGame(opponent);
       if (player === computer) await waitMilliseconds(700);
     },
     async onNextTurn(player) {
       mainLabel.textContent = (player !== computer) ? 'Wait for computer' : 'Wait for your turn';
       await waitMilliseconds(300);
 
-      renderShips(player.board, mainBoardDOM, player === computer);
-      renderFleetIndicator(player, mainFleetDOM);
+      renderGame(opponent);
       mainLabel.textContent = (player !== computer) ? 'Computer\'s Turn' : 'Your Turn';
       currentOpponent = player;
     },
@@ -77,6 +75,11 @@ startGameButton.addEventListener('click', (e) => {
 });
 
 startGameButton.click();
+
+function renderGame(opponent) {
+  renderFleetIndicator(opponent, mainFleetDOM);
+  renderShips(opponent.board, mainBoardDOM, opponent !== player);
+}
 
 function waitMilliseconds(ms) {
   return new Promise((resolve) => {
