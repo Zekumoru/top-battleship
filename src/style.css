@@ -161,6 +161,7 @@ body {
 .fleet-indicator .ship-block {
   flex: 1;
   border-right: 2px solid var(--fg-color);
+  background-color: rgba(78, 189, 199, 0.2);
 }
 
 .fleet-indicator .ship-block:last-child {
