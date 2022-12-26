@@ -4,9 +4,21 @@ import { BOARD_SIZE } from './GameBoard';
 export default {
   renderBoard,
   renderShips,
+  renderFleetIndicator,
   makeShipsDraggable,
   makeDroppable,
   makeShipsRotatable,
+  removeInteracts,
+};
+
+const dragInfo = {
+  ship: null,
+  shipDirection: 'none',
+  shipElement: null,
+  shipBlock: null,
+  board: null,
+  boardDOM: null,
+  interactEnabled: false,
 };
 
 export function renderBoard(gameBoard) {
@@ -54,16 +66,14 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       const cell = boardDOM.children[index];
       const { ship, status, direction } = col;
 
-      if (status === 'miss') {
-        cell.style = 'background-color: grey;';
-      }
+      cell.classList.remove('miss');
+      cell.classList.remove('hit');
 
-      if (status === 'hit') {
-        cell.style = 'background-color: red;';
-      }
+      if (status === 'miss') cell.classList.add('miss');
+      if (status === 'hit') cell.classList.add('hit');
 
       if (ship === null) return;
-      if (hideShips) return; // for computer's board so it's hidden to the player
+      if (hideShips && !ship.isSunk()) return; // for computer's board so it's hidden to the player, shows the ship if it is sunk though
 
       if (x > 0 && playerBoard.board[y][x - 1].ship === ship) return;
       if (y > 0 && playerBoard.board[y - 1][x].ship === ship) return;
@@ -94,6 +104,7 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       shipElement.style.top = `${top}px`;
       shipElement.style.left = `${left}px`;
       shipElement.addEventListener('click', null, true);
+      if (dragInfo.interactEnabled) shipElement.classList.add('interactable');
 
       const shipBlocks = document.createElement('div');
       shipBlocks.className = 'ship-blocks';
@@ -118,18 +129,36 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
   });
 }
 
-const dragInfo = {
-  ship: null,
-  shipDirection: 'none',
-  shipElement: null,
-  shipBlock: null,
-  board: null,
-  boardDOM: null,
-};
+export function renderFleetIndicator(player, fleetIndicator) {
+  const shipSize = fleetIndicator.clientWidth / 11;
+  fleetIndicator.innerHTML = '';
+
+  player.board.ships.forEach((ship) => {
+    const shipElement = document.createElement('div');
+    shipElement.className = 'ship';
+    shipElement.style.width = `${shipSize * ship.length}px`;
+    shipElement.style.height = `${shipSize}px`;
+    if (ship.isSunk()) shipElement.classList.add('sunk');
+
+    for (let i = 0; i < ship.length; i++) {
+      const shipBlock = document.createElement('div');
+      shipBlock.className = 'ship-block';
+
+      shipElement.appendChild(shipBlock);
+    }
+
+    fleetIndicator.insertAdjacentElement('beforeend', shipElement);
+
+    ship.onSunk = () => {
+      shipElement.classList.add('sunk');
+    };
+  });
+}
 
 export function makeShipsDraggable(board, boardDOM) {
   const position = { x: 0, y: 0 };
   let clonedShip = null;
+  dragInfo.interactEnabled = true;
 
   interact('.ship').draggable({
     listeners: {
@@ -241,5 +270,13 @@ export function makeShipsRotatable(board, boardDOM) {
     }
 
     renderShips(board, boardDOM);
+  });
+}
+
+export function removeInteracts(classList) {
+  dragInfo.interactEnabled = false;
+
+  classList.forEach((className) => {
+    interact(`.${className}`).unset();
   });
 }

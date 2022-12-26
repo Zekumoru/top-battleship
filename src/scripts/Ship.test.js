@@ -21,3 +21,19 @@ test('that creating a ship with length 0 throws a RangeError', () => {
     new Ship(0);
   }).toThrow(RangeError);
 });
+
+test('that hitting and sinking a ship invoke the events accordingly', () => {
+  const ship = new Ship(2);
+  const hitListener = jest.fn();
+  const sunkListener = jest.fn();
+
+  ship.onHit = hitListener;
+  ship.onSunk = sunkListener;
+  ship.hit();
+
+  expect(hitListener.mock.calls.length).not.toBe(0);
+  expect(sunkListener.mock.calls.length).toBe(0);
+
+  ship.hit();
+  expect(sunkListener.mock.calls.length).not.toBe(0);
+});

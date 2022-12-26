@@ -1,4 +1,6 @@
 export default class Ship {
+  onHit;
+  onSunk;
   #length;
   #hits;
   #sunk;
@@ -21,10 +23,15 @@ export default class Ship {
 
   hit() {
     this.#hits++;
+    if (typeof this.onHit === 'function') this.onHit(this.#hits);
+
+    if (this.#hits >= this.#length) {
+      this.#sunk = true;
+      if (typeof this.onSunk === 'function') this.onSunk();
+    }
   }
 
   isSunk() {
-    if (this.#hits >= this.#length) this.#sunk = true;
     return this.#sunk;
   }
 }

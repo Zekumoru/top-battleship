@@ -1,10 +1,11 @@
 :root {
   --bg-color: hsl(252, 3%, 10%);
-  --fg-color: #938e94;
+  --fg-color: #808080;
   --primary-color: #557a95;
   --secondary-color: #7395ae;
   --accent-color: #b1a296;
   --navy-blue: #0d5fa7;
+  --red: #ff0000;
 }
 
 * {
@@ -54,7 +55,8 @@ body {
   margin: 8px 0;
 }
 
-.start-game-btn {
+.start-game-btn,
+.new-game-btn {
   width: 100%;
   background-color: white;
   color: black;
@@ -62,7 +64,8 @@ body {
   cursor: pointer;
 }
 
-.start-game-btn:hover {
+.start-game-btn:hover,
+.new-game-btn:hover {
   background-color: hsl(0, 0%, 90%);
 }
 
@@ -75,6 +78,10 @@ body {
   grid-template-columns: repeat(11, 1fr);
   position: relative;
   margin: 0 auto;
+}
+
+.main-game-board {
+  margin-bottom: 16px;
 }
 
 .cell {
@@ -111,28 +118,69 @@ body {
   border-bottom: var(--border-game-cell);
 }
 
-.ship {
+.game-cell.miss {
+  background-color: rgb(103, 103, 103);
+}
+
+.game-cell.hit {
+  background-color: var(--red);
+}
+
+.game-board .ship {
   position: absolute;
-  border: 4px solid lightblue;
-  background-color: rgba(78, 189, 199, 0.2);
+  border: 4px solid white;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.game-board .ship.interactable {
   touch-action: none;
   cursor: move;
 }
 
-.ship.cant-place {
+.game-board .ship.cant-place {
   border: 4px solid rgb(255, 90, 90);
   background-color: rgba(195, 60, 60, 0.2);
 }
 
-.ship.dragging {
+.game-board .ship.dragging {
   z-index: 1;
 }
 
-.ship-blocks {
+.game-board .ship-blocks {
   display: flex;
   position: absolute;
 }
 
-.ship-block {
+.game-board .ship-block {
   flex: 1;
+}
+
+.fleet-indicator {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fleet-indicator .ship {
+  display: flex;
+  border: 2px solid white;
+  border-radius: 4px;
+}
+
+.fleet-indicator .ship.sunk {
+  background-color: var(--red);
+}
+
+.fleet-indicator .ship-block {
+  flex: 1;
+  border-right: 2px solid var(--fg-color);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.fleet-indicator .ship-block:last-child {
+  border-color: transparent;
 }
