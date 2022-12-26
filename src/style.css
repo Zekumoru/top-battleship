@@ -32,7 +32,11 @@ body {
 
 .title {
   text-align: center;
-  margin: 32px 0 24px 0;
+  margin: 32px 0 0 0;
+}
+
+.title + p {
+  text-align: center;
 }
 
 .fancy-rounded-box {
