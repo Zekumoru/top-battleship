@@ -8,12 +8,12 @@ import Player from './scripts/Player';
 import ComputerPlayer from './scripts/ComputerPlayer';
 
 const mainBoardDOM = renderBoard(document.querySelector('#main-game-board'));
-const mainFleetDOM = document.querySelector('#main-board-fleet');
 const mainLabel = document.querySelector('.main-label');
 const tipParagraph = document.querySelector('.tip');
 
-const player = new Player('Player');
-const computer = new ComputerPlayer();
+let player = new Player('Player');
+let computer = new ComputerPlayer();
+let mainFleetDOM = null;
 let currentOpponent = player;
 
 mainBoardDOM.addEventListener('click', (e) => {
@@ -48,6 +48,10 @@ startGameButton.addEventListener('click', (e) => {
 
   // start game
   currentOpponent = computer;
+
+  document.body.insertAdjacentHTML('beforeend', '<div id="main-board-fleet" class="main-board-fleet fleet-indicator"></div>');
+  mainFleetDOM = document.querySelector('#main-board-fleet');
+
   renderFleetIndicator(computer, mainFleetDOM);
   renderShips(computer.board, mainBoardDOM, true);
 
@@ -71,13 +75,37 @@ startGameButton.addEventListener('click', (e) => {
     },
   }).then((winner) => {
     mainLabel.textContent = `${winner.name} wins!`;
+
+    mainFleetDOM.remove();
+    mainFleetDOM = null;
+
+    document.body.insertAdjacentHTML('beforeend', '<button id="new-game-btn" class="new-game-btn fancy-rounded-box">Start New Game</button>');
+    document.querySelector('#new-game-btn').addEventListener('click', (e) => {
+      e.target.remove();
+      mainLabel.textContent = 'Place your ships';
+      document.body.appendChild(tipParagraph);
+      document.body.appendChild(startGameButton);
+
+      player = new Player('Player');
+      computer = new ComputerPlayer();
+      currentOpponent = player;
+
+      Game.populateBoard(player.board);
+      Game.populateBoard(computer.board);
+
+      renderShips(player.board, mainBoardDOM);
+
+      makeShipsDraggable(player.board, mainBoardDOM);
+      makeShipsRotatable(player.board, mainBoardDOM);
+      makeDroppable();
+    });
+
+    renderGame(currentOpponent);
   });
 });
 
-startGameButton.click();
-
 function renderGame(opponent) {
-  renderFleetIndicator(opponent, mainFleetDOM);
+  if (mainFleetDOM) renderFleetIndicator(opponent, mainFleetDOM);
   renderShips(opponent.board, mainBoardDOM, opponent !== player);
 }
 

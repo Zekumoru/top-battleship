@@ -55,7 +55,8 @@ body {
   margin: 8px 0;
 }
 
-.start-game-btn {
+.start-game-btn,
+.new-game-btn {
   width: 100%;
   background-color: white;
   color: black;
@@ -63,7 +64,8 @@ body {
   cursor: pointer;
 }
 
-.start-game-btn:hover {
+.start-game-btn:hover,
+.new-game-btn:hover {
   background-color: hsl(0, 0%, 90%);
 }
 
