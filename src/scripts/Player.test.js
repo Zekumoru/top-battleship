@@ -28,3 +28,12 @@ test('that the computer does not make the same move', () => {
 
   expect(moveOne).not.toBe(moveTwo);
 });
+
+test('that the attack is near the given coord', () => {
+  jest.spyOn(global.Math, 'random').mockReturnValue(0.12345);
+
+  const computer = new ComputerPlayer();
+  const coord = computer.attack(); // returns { x: 2, y: 1 }
+
+  expect(computer.attack(coord)).toMatchObject({ x: 1, y: 1 });
+});
