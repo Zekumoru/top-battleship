@@ -15,9 +15,11 @@ const Game = {
 export default Game;
 
 async function start({
-  playerOne, playerTwo, onTurn, onTurnMade, onNextTurn,
+  playerOne, playerTwo, onBeforeTurn, onTurn, onTurnMade, onNextTurn,
 }) {
-  const listeners = { onTurn, onTurnMade, onNextTurn };
+  const listeners = {
+    onBeforeTurn, onTurn, onTurnMade, onNextTurn,
+  };
 
   while (true) {
     await handleTurn(playerOne, playerTwo, listeners);
@@ -32,8 +34,10 @@ async function start({
 
 async function handleTurn(player, opponent, listeners) {
   const isComputer = (player instanceof ComputerPlayer);
-  let hit = true;
-  let alreadyHit;
+  let hit;
+  let alreadyHit = true;
+
+  if (typeof listeners.onBeforeTurn === 'function') await listeners.onBeforeTurn(player, opponent);
 
   do {
     const coords = (isComputer)

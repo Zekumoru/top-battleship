@@ -58,6 +58,10 @@ startGameButton.addEventListener('click', (e) => {
   Game.start({
     playerOne: player,
     playerTwo: computer,
+    async onBeforeTurn(player, opponent) {
+      mainLabel.textContent = (opponent !== computer) ? 'Computer\'s Turn' : 'Your Turn';
+      currentOpponent = opponent;
+    },
     async onTurn(player) {
       if (player === computer) await waitMilliseconds(300);
     },
@@ -70,8 +74,6 @@ startGameButton.addEventListener('click', (e) => {
       await waitMilliseconds(300);
 
       renderGame(player);
-      mainLabel.textContent = (player !== computer) ? 'Computer\'s Turn' : 'Your Turn';
-      currentOpponent = player;
     },
   }).then((winner) => {
     mainLabel.textContent = `${winner.name} wins!`;
