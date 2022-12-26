@@ -13,7 +13,11 @@ export default class ComputerPlayer extends Player {
   attack(nearCoord = null) {
     if (this.#movesPointer <= 0) return null;
 
-    const index = (nearCoord) ? this.#randomIndexNearToCoord(nearCoord) : Math.floor(Math.random() * this.#movesPointer);
+    let index = -1;
+
+    if (nearCoord) index = this.#randomIndexNearToCoord(nearCoord);
+    if (index === -1) index = Math.floor(Math.random() * this.#movesPointer);
+
     this.#movesPointer--;
     [this.#availableMoves[index], this.#availableMoves[this.#movesPointer]] = [this.#availableMoves[this.#movesPointer], this.#availableMoves[index]];
     return this.#availableMoves[this.#movesPointer];
@@ -32,6 +36,8 @@ export default class ComputerPlayer extends Player {
       if (move.x >= BOARD_SIZE || move.y >= BOARD_SIZE) return false;
       return !this.#alreadyMoved(move.x, move.y);
     });
+
+    if (possibleMoves.length === 0) return -1;
 
     const chosen = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
     return this.#availableMoves.findIndex((move) => (move.x === chosen.x && move.y === chosen.y));

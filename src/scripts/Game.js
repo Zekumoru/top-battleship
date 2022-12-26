@@ -34,14 +34,16 @@ async function start({
 
 async function handleTurn(player, opponent, listeners) {
   const isComputer = (player instanceof ComputerPlayer);
+  if (!isComputer) return;
   let hit;
   let alreadyHit = true;
+  let coords = null;
 
   if (typeof listeners.onBeforeTurn === 'function') await listeners.onBeforeTurn(player, opponent);
 
   do {
-    const coords = (isComputer)
-      ? player.attack()
+    coords = (isComputer)
+      ? player.attack(coords)
       : (await new Promise((resolve) => { getUserInput = resolve; }));
 
     if (!isComputer && coords.player !== player) continue;
