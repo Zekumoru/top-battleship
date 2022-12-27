@@ -41,7 +41,7 @@ async function handleTurn(player, opponent, listeners) {
 
   do {
     const coords = (isComputer)
-      ? player.attack()
+      ? player.attack(opponent.board)
       : (await new Promise((resolve) => { getUserInput = resolve; }));
 
     if (!isComputer && coords.player !== player) continue;
