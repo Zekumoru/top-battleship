@@ -20,7 +20,8 @@ export default class ComputerPlayer extends Player {
       this.#targetShip = this.#getShip(this.#prevMove, board);
       this.#firstHitCoord = this.#prevMove;
     }
-    else if (this.#targetShip?.isSunk()) {
+
+    if (this.#targetShip?.isSunk()) {
       this.#targetShip = null;
     }
 
@@ -93,6 +94,11 @@ export default class ComputerPlayer extends Player {
       if (move.x >= BOARD_SIZE || move.y >= BOARD_SIZE) return false;
       return !this.#alreadyMoved(move.x, move.y);
     });
+
+    if (possibleMoves.length === 0) {
+      // this statement accounts for when the ship is touching the border
+      return this.#getRandomAdjacentMove(this.#firstHitCoord, board, { direction: this.#getShipDirection(this.#targetShip, board) });
+    }
 
     const index = Math.floor(Math.random() * possibleMoves.length);
     this.#prevMove = this.#getMove(this.#getMoveIndex(possibleMoves[index]));
