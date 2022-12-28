@@ -40,7 +40,6 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@mdi/font": "^7.0.96",
     "interactjs": "^1.10.17",
     "normalize.css": "^8.0.1"
   },
