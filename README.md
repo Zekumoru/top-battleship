@@ -1,6 +1,6 @@
 # Battleship
 
-The tenth project from the JavaScript course of The Odin Project.
+The [tenth project](https://www.theodinproject.com/lessons/node-path-javascript-battleship) from the JavaScript course of The Odin Project.
 
 ## Goal
 
@@ -27,3 +27,6 @@ Thank you for reading my remarks and I hope this project could help or interest 
 ## Stats
 
 **Hours coded:** Around 20-30 hours
+
+## Credits
+Logo icon from [flaticon](https://www.flaticon.com/free-icon/ship_3939752).
