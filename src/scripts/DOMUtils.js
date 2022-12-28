@@ -53,13 +53,12 @@ function createCell(x, y) {
   return cell;
 }
 
-export function renderShips(playerBoard, boardDOM, hideShips = false) {
+export function renderShips(playerBoard, boardDOM, hideShips = false, coordToAnimate = null) {
   const start = 12;
   const gameCellSize = boardDOM.children[start].getBoundingClientRect().width;
   const borderSize = gameCellSize - Number(window.getComputedStyle(boardDOM.children[start], '::before').width.slice(0, -2));
 
   boardDOM.querySelectorAll('.ship').forEach((ship) => ship.remove());
-
   playerBoard.board.forEach((row, y) => {
     row.forEach((col, x) => {
       const index = start + y * 11 + x;
@@ -69,8 +68,20 @@ export function renderShips(playerBoard, boardDOM, hideShips = false) {
       cell.classList.remove('miss');
       cell.classList.remove('hit');
 
-      if (status === 'miss') cell.classList.add('miss');
-      if (status === 'hit') cell.classList.add('hit');
+      if (coordToAnimate?.x === x && coordToAnimate?.y === y) {
+        if (status === 'hit') cell.innerHTML = '<div class="hit animation"></div>';
+        if (status === 'miss') cell.innerHTML = '<div class="miss animation"></div>';
+
+        cell.addEventListener('animationend', () => {
+          cell.innerHTML = '';
+          if (status === 'miss') cell.classList.add('miss');
+          if (status === 'hit') cell.classList.add('hit');
+        });
+      }
+      else {
+        if (status === 'miss') cell.classList.add('miss');
+        if (status === 'hit') cell.classList.add('hit');
+      }
 
       if (ship === null) return;
       if (hideShips && !ship.isSunk()) return; // for computer's board so it's hidden to the player, shows the ship if it is sunk though

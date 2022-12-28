@@ -40,17 +40,19 @@ async function handleTurn(player, opponent, listeners) {
   if (typeof listeners.onBeforeTurn === 'function') await listeners.onBeforeTurn(player, opponent);
 
   do {
-    const coords = (isComputer)
+    const coord = (isComputer)
       ? player.attack(opponent.board)
       : (await new Promise((resolve) => { getUserInput = resolve; }));
 
-    if (!isComputer && coords.player !== player) continue;
-    const { x, y } = coords;
+    if (!isComputer && coord.player !== player) continue;
+    const { x, y } = coord;
+    coord.x = Number(x);
+    coord.y = Number(y);
 
     if (typeof listeners.onTurn === 'function') await listeners.onTurn(player, opponent);
 
     ({ hit, alreadyHit } = opponent.board.receiveAttack(x, y));
-    if (typeof listeners.onTurnMade === 'function') await listeners.onTurnMade(player, opponent, hit);
+    if (typeof listeners.onTurnMade === 'function') await listeners.onTurnMade(player, opponent, (alreadyHit) ? null : coord);
 
     if (opponent.board.hasAllSunk()) return;
   } while (hit || alreadyHit);

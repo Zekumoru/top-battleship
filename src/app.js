@@ -65,9 +65,9 @@ startGameButton.addEventListener('click', (e) => {
     async onTurn(player) {
       if (player === computer) await waitMilliseconds(300);
     },
-    async onTurnMade(player, opponent) {
-      renderGame(opponent);
-      if (player === computer) await waitMilliseconds(700);
+    async onTurnMade(player, opponent, coord) {
+      renderGame(opponent, coord);
+      await waitMilliseconds(500);
     },
     async onNextTurn(player) {
       mainLabel.textContent = (player !== computer) ? 'Wait for computer' : 'Wait for your turn';
@@ -106,9 +106,9 @@ startGameButton.addEventListener('click', (e) => {
   });
 });
 
-function renderGame(opponent) {
+function renderGame(opponent, coord = null) {
   if (mainFleetDOM) renderFleetIndicator(opponent, mainFleetDOM);
-  renderShips(opponent.board, mainBoardDOM, opponent !== player);
+  renderShips(opponent.board, mainBoardDOM, opponent !== player, coord);
 }
 
 function waitMilliseconds(ms) {
