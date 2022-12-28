@@ -13,7 +13,7 @@ export default class ComputerPlayer extends Player {
     this.#initAvailableMoves();
   }
 
-  attack(board) {
+  attack(board = null) {
     if (this.#movesPointer <= 0) return null;
 
     if (this.#targetShip == null && this.#isLastMoveAHit(board)) {
@@ -44,6 +44,7 @@ export default class ComputerPlayer extends Player {
   }
 
   #isLastMoveAHit(board) {
+    if (board == null) return false;
     if (this.#prevMove == null) return false;
 
     const { x, y } = this.#prevMove;
