@@ -22,6 +22,7 @@ export default class ComputerPlayer extends Player {
     }
 
     if (this.#targetShip?.isSunk()) {
+      this.#removeAdjacentMoves(board);
       this.#targetShip = null;
     }
 
@@ -111,6 +112,51 @@ export default class ComputerPlayer extends Player {
       if (previousMove.x === x && previousMove.y === y) return true;
     }
     return false;
+  }
+
+  #removeAdjacentMoves(board) {
+    let moveInfo = this.#getMoveInfo(this.#prevMove, board);
+    while (moveInfo) {
+      moveInfo.adjacents.forEach((adjacent) => this.#removeMove(adjacent));
+      moveInfo = this.#getMoveInfo(moveInfo.next, board, moveInfo.move);
+    }
+  }
+
+  #getMoveInfo(move, board, previous = null) {
+    if (move == null) return null;
+
+    const { x, y } = move;
+    const moveInfo = {
+      adjacents: [],
+      next: null,
+      move,
+    };
+
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue; // don't push the move itself
+
+        const dX = x + j;
+        const dY = y + i;
+        const cell = board.board[dY]?.[dX];
+        if (cell === undefined) continue;
+
+        moveInfo.adjacents.push({ x: dX, y: dY });
+        if (cell.status === 'hit' && !(dX === previous?.x && dY === previous?.y)) {
+          moveInfo.next = { x: dX, y: dY };
+        }
+      }
+    }
+
+    return moveInfo;
+  }
+
+  #removeMove(move) {
+    const index = this.#getMoveIndex(move);
+    if (index < 0) return false;
+
+    this.#getMove(index);
+    return true;
   }
 
   #getRandomMove() {
