@@ -72,10 +72,10 @@ export function renderShips(playerBoard, boardDOM, hideShips = false, coordToAni
         if (status === 'hit') cell.innerHTML = '<div class="hit animation"></div>';
         if (status === 'miss') cell.innerHTML = '<div class="miss animation"></div>';
 
-        cell.addEventListener('animationend', () => {
+        cell.addEventListener('animationend', (e) => {
           cell.innerHTML = '';
-          if (status === 'miss') cell.classList.add('miss');
-          if (status === 'hit') cell.classList.add('hit');
+          if (e.target.classList.contains('miss')) cell.classList.add('miss');
+          if (e.target.classList.contains('hit')) cell.classList.add('hit');
         });
       }
       else {
